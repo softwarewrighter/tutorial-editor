@@ -1,4 +1,4 @@
-# Avatar-Orchestrated Video Pipeline – Architecture Overview
+# Avatar-Orchestrated Video Pipeline - Architecture Overview
 
 ## Goals
 
@@ -15,10 +15,10 @@
 
 Top-level layout:
 
-- `documentation/` – design docs, HOWTOs, architecture notes.
-- `scripts/` – small shell helpers to build and run components.
-- `components/orchestrator/` – Rust workspace for CLI + HTTP server + orchestration core + SQLite access.
-- `components/ui_workbench/` – Rust workspace for Yew/WASM editor + shared UI core.
+- `documentation/` - design docs, HOWTOs, architecture notes.
+- `scripts/` - small shell helpers to build and run components.
+- `components/orchestrator/` - Rust workspace for CLI + HTTP server + orchestration core + SQLite access.
+- `components/ui_workbench/` - Rust workspace for Yew/WASM editor + shared UI core.
 
 Each `components/<name>/` directory is an independent Rust workspace with its own `Cargo.toml` and `crates/*` members.
 The repo *root* deliberately has **no** `Cargo.toml`.
@@ -38,7 +38,7 @@ Crates:
 - `orchestrator-core`
   - Domain + application services for:
     - Projects, scenes, assets CRUD (backed by SQLite via orchestrator-db).
-    - High-level workflows (e.g., “generate script”, “plan scenes”, “invoke avatar pipeline”).
+    - High-level workflows (e.g., "generate script", "plan scenes", "invoke avatar pipeline").
   - Pure Rust logic; no IO except via trait-based ports to infra crates.
 
 - `orchestrator-http`
@@ -123,9 +123,9 @@ Build/development:
 
 ### Example API (early stub)
 
-- `GET /api/health` → `{ "status": "ok" }`
-- `GET /api/projects` → list of projects.
-- `POST /api/projects` → create new project.
+- `GET /api/health` -> `{ "status": "ok" }`
+- `GET /api/projects` -> list of projects.
+- `POST /api/projects` -> create new project.
 
 ### SQLite Schema (first pass)
 
@@ -153,7 +153,7 @@ Build/development:
 2. Flesh out HTTP routes in `orchestrator-http`.
 3. Have `ui-app` render:
    - Project list
-   - “Create project” form
-4. Add minimal “scene” concept:
+   - "Create project" form
+4. Add minimal "scene" concept:
    - Each project has ordered scenes with titles, asset references, and timing.
 5. Gradually integrate external services (LLMs, avatar pipeline, Playwright/MCP) behind trait-based adapters.

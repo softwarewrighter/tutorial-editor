@@ -15,7 +15,10 @@ where
     R: ProjectRepository + 'static,
 {
     pub fn new(config: AppConfig, project_repo: Arc<R>) -> Self {
-        Self { config, project_repo }
+        Self {
+            config,
+            project_repo,
+        }
     }
 
     pub async fn list_projects(&self) -> Result<Vec<Project>> {

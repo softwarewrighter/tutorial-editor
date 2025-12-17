@@ -1,9 +1,9 @@
 use crate::schema::init_db;
 use anyhow::{Context, Result};
 use async_trait::async_trait;
-use orchestrator-core::domain::Project;
-use orchestrator-core::ports::ProjectRepository;
-use rusqlite::{params, Connection};
+use orchestrator_core::domain::Project;
+use orchestrator_core::ports::ProjectRepository;
+use rusqlite::{Connection, params};
 use std::sync::{Arc, Mutex};
 use time::OffsetDateTime;
 
@@ -14,7 +14,8 @@ pub struct SqliteProjectRepository {
 
 impl SqliteProjectRepository {
     pub fn new(path: &str) -> Result<Self> {
-        let conn = Connection::open(path).with_context(|| format!("failed to open sqlite db at {path}"))?;
+        let conn = Connection::open(path)
+            .with_context(|| format!("failed to open sqlite db at {path}"))?;
         init_db(&conn)?;
         Ok(Self {
             conn: Arc::new(Mutex::new(conn)),
@@ -69,8 +70,10 @@ impl ProjectRepository for SqliteProjectRepository {
 
         let created = tokio::task::spawn_blocking(move || {
             let conn = conn.lock().unwrap();
-            let created_at_str = created_at.format(&time::format_description::well_known::Rfc3339)?;
-            let updated_at_str = updated_at.format(&time::format_description::well_known::Rfc3339)?;
+            let created_at_str =
+                created_at.format(&time::format_description::well_known::Rfc3339)?;
+            let updated_at_str =
+                updated_at.format(&time::format_description::well_known::Rfc3339)?;
             conn.execute(
                 "INSERT INTO projects (slug, title, subtitle, description, created_at, updated_at)
                  VALUES (?1, ?2, NULL, NULL, ?3, ?4)",

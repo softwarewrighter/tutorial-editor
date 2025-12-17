@@ -2,6 +2,8 @@
 name = "orchestrator-cli"
 version = "0.1.0"
 edition = "2024"
+repository = "https://github.com/softwarewrighter/tutorial-editor"
+license = "MIT"
 
 [dependencies]
 anyhow = { workspace = true }
@@ -14,3 +16,7 @@ tracing-subscriber = { workspace = true }
 orchestrator-core = { path = "../orchestrator-core" }
 orchestrator-db = { path = "../orchestrator-db" }
 orchestrator-http = { path = "../orchestrator-http" }
+
+[build-dependencies]
+chrono = "0.4"
+hostname = "0.4"

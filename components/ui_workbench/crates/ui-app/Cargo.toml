@@ -2,6 +2,8 @@
 name = "ui-app"
 version = "0.1.0"
 edition = "2024"
+repository = "https://github.com/softwarewrighter/tutorial-editor"
+license = "MIT"
 
 [dependencies]
 yew = { workspace = true }
@@ -9,3 +11,7 @@ wasm-bindgen = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 ui-core = { path = "../ui-core" }
+
+[build-dependencies]
+chrono = "0.4"
+hostname = "0.4"
