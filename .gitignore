@@ -1,0 +1,26 @@
+# Rust build artifacts
+target/
+**/*.rs.bk
+Cargo.lock
+
+# SQLite database (not tracked per architecture)
+*.sqlite3
+*.sqlite
+data/
+
+# Assets directory (large binaries not tracked)
+assets/
+
+# Trunk/WASM build output
+dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

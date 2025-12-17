@@ -1,0 +1,382 @@
+Skip to content
+Chat history
+
+
+
+
+You said:
+I'm working on tools and a workflow for producing narrated educational YouTube videos (Twitch-like live coding, but scripted, edited for brevity and clarity.  I want to fully utilize my Cloud LLM subscriptions, CLI AI coding agents, and local LLMs via Ollama, llama.cpp, etc.    I have a workflow that includes: generate an image of an avatar (the narrator), image-to-video to add head movements and blinking, a text-to-speech model that uses my cloned voice to produce narration audio.  I then have tools/process to stretch the avatar video to match the length of the audio, and then lip sync the avatar to the audio, remove the background (so that the avatar can be composited on top of screen captures minimizing obscured text), and shrink to thumbnail (still with transparent background).  I also have AI-assisted tools to identify topics to produce, generate scripts and descriptions of graphics (e.g., title, subtitles, and bullet points).  What is missing is an overall orchestration and content generation set of tools.  I want an AI agent to use MCP (Playwright) to interact with web pages that are Chrome Remote Desktop views of a target host, potentially showing: terminal, CLI commands, editor, IDE, web browser, desktop app, mobile device emulator, etc.  I want a specific tool (vs. using kdenlive manually) to automate the construction of such videos.  The input is an idea suggested by an AI that read the status of a project, refined by a prompt by me to show some specific action to accomplish some goal, at which point various tools are orchestrated to generate a script, dialog, actual "scenes" to be recorded, each scene is a CLI, editor, browser, IDE, etc., interaction, with possibly a graphic overlay (e.g., Step 2. Foo the Bar), with a talking head transparent avatar composited on top, lip-synced to the AI generated TTS dialog.  The orchestration should be able to generate a 5 minute (+/- 2 minute) video with a beginning, middle, and end, with titles, subtitiles, other graphics, with the narrator avatar.  There should be a preview/edit mode where I can correct or add/remove content, adjust the placement of the graphics and the appearance and placement of the avatar.  e.g., if the avatar's head is facing left, the avatar should appear on the right side, and vs versa for avatars facing right.  Also, the avatar may obscure text of interest so I want to be able to move the avatar away from obscuring the text.  The editor can be web-based (using Rust/Yew/WASM), and support selecting a replacement avatar (say the automation puts a right-facing avatar on the left but I want a left-facing avatar on the right), support dragging/dropping graphic overlays, avatar position, etc.  This should be a Rust 2024 Edition CLI with a built-in server that controls the assets on the local machine and uses calls to AIs and services to build and edit the individual components being generated, composited, and edited.  All domain and presentation logic should be in Rust (transpiled to WASM) with minimal to no JavaScript (and the project should not include any Typescript or Python).  The project should have ./scripts to build and serve the tool.  The CLI should have a -c/--config-file (default: ./config.toml) that has the hosts, ports, and/or URLs, for each service to be used.  The app should use sqlite to manage the parts for a project (CRUD: projects, titles, subtitiles, avatars, script, dialog, inputs, outputs).  Large binary files (video, audio) (inputs, outputs) are kept in the filesystem (not tracked by git).  The sqlite db is also not tracked by git.  Produce a zip file that has the initial layout of a multi-crate Rust workspace project with this layout at the top level:  root has no Cargo.toml, has ./documentation, ./scripts, and ./components/{name-a,name-b,name-c,...} where each component has a root Cargo.toml workspace with a ./crates/{crate-a,crate-b,crate-c,...} each having its own Cargo.toml and ./src dirs.  The goal is to have very few functions per module, very few modules per crate, very few crates per component (and no limit on components--which could be replaced by git submodules in the future).
+ChatGPT said:
+
+Thought for 23s
+Here’s a first-pass architecture and a working starter repo skeleton you can unzip and build.
+
+1. Restating the requirements
+You want:
+
+A Rust 2024-only system (no TS, no Python, minimal/no hand-written JS).
+
+Top-level layout:
+
+./documentation
+./scripts
+./components/
+    orchestrator/
+    ui_workbench/
+# (root has NO Cargo.toml)
+Each components/<name>/ is its own Rust workspace, with:
+
+Cargo.toml (workspace)
+
+crates/<crate-name>/Cargo.toml + src/
+
+Core responsibilities:
+
+CLI + HTTP server (Rust) orchestrating:
+
+LLMs (cloud + local: Ollama, llama.cpp, etc.).
+
+Avatar / image-to-video / lip-sync / background removal / TTS services.
+
+Asset management on local FS.
+
+SQLite-backed metadata (projects, scenes, assets).
+
+Yew/WASM web UI for:
+
+Project/scene CRUD.
+
+Avatar selection + placement.
+
+Graphic overlay positioning.
+
+Preview/edit mode.
+
+Configurable via -c/--config-file (default ./config.toml).
+
+SQLite DB + large binary assets not tracked by git.
+
+Very small, composable units: few funcs per module, few modules per crate, few crates per component, unlimited components.
+
+The skeleton below focuses on projects + HTTP + Yew shell; you can grow it gradually into full orchestration.
+
+2. High-level architecture
+Components:
+
+components/orchestrator – backend workspace
+
+orchestrator-cli – CLI entrypoint + HTTP server bootstrap.
+
+orchestrator-core – config, domain, traits, orchestration services.
+
+orchestrator-db – SQLite implementation of repositories.
+
+orchestrator-http – Warp-based HTTP API exposing core.
+
+components/ui_workbench – frontend workspace
+
+ui-core – shared DTOs/types for API payloads.
+
+ui-app – Yew/WASM app (built via trunk) and future scene editor.
+
+Non-functional:
+
+Rust 2024 (via [workspace.package] edition = "2024" and crate edition = "2024").
+
+CLIs + HTTP server are all async (tokio).
+
+SQLite via rusqlite with a small wrapper (orchestrator-db).
+
+No TS, no Python. Yew+WASM; Trunk is the Rust build tool.
+
+Clean layering: core defines ports/traits; db and http are adapters.
+
+Pros:
+
+Very aligned with your desire for micro-crates and clear boundaries.
+
+Easy to add more components (e.g., components/automation_agents later) without disturbing existing code.
+
+Rust-only, so you can leverage cargo + CI cleanly.
+
+Cons / trade-offs:
+
+Multi-workspace layout is slightly more overhead to wire up at first.
+
+Yew/WASM + Trunk adds another tool (but it’s Rust-native and avoids JS/TS).
+
+3. What the skeleton already does
+Backend (orchestrator)
+Crates:
+
+orchestrator-core
+
+config.rs – AppConfig and nested configs for server, storage, services.*.
+
+domain.rs – Project struct with timestamps.
+
+ports.rs – ProjectRepository trait (async, via async-trait).
+
+services.rs – OrchestratorApp with:
+
+list_projects()
+
+create_project(slug, title)
+
+orchestrator-db
+
+schema.rs – init_db() that creates projects table.
+
+project_repo.rs – SqliteProjectRepository implementing ProjectRepository:
+
+list_projects()
+
+create_project()
+
+Uses tokio::task::spawn_blocking so SQLite stays off async runtime threads.
+
+orchestrator-http
+
+Warp-based server exposing:
+
+GET /api/health → { "status": "ok" }
+
+GET /api/projects → JSON list of projects.
+
+POST /api/projects with body { "slug": "...", "title": "..." }.
+
+orchestrator-cli
+
+Binary with:
+
+-c/--config-file (default ./config.toml).
+
+Loads AppConfig from TOML.
+
+Creates SqliteProjectRepository for storage.sqlite_path.
+
+Constructs OrchestratorApp and runs HttpServer.
+
+So you already have:
+
+A configurable CLI.
+
+A running HTTP API.
+
+A SQLite DB for projects.
+
+From here you can add:
+
+Scenes table.
+
+Assets table.
+
+Orchestration workflows that call your existing tools and remote services.
+
+Frontend (UI workbench)
+Crates:
+
+ui-core
+
+ProjectDto mirroring backend Project (simplified).
+
+ui-app
+
+Yew app with:
+
+main.rs – #[wasm_bindgen(start)] entrypoint.
+
+app.rs – basic UI:
+
+Title + explanation.
+
+“Projects” section that will eventually fetch /api/projects.
+
+Trunk.toml + index.html
+
+Minimal bootstrapping for Yew app; Trunk builds ui-app into WASM and injects it.
+
+Right now the UI is just a shell, but the structure is correctly in place to:
+
+Add HTTP calls to /api/projects using gloo_net or similar.
+
+Add components for project/scene listing and editing.
+
+Later: scene timeline, avatar placement, overlays.
+
+4. Project layout (actual files)
+At the repo root:
+
+documentation/
+  architecture.md
+  roadmap.md
+scripts/
+  build_all.sh
+  run_orchestrator.sh
+  dev_ui.sh
+config.toml
+components/
+  orchestrator/
+    Cargo.toml
+    crates/
+      orchestrator-cli/
+        Cargo.toml
+        src/main.rs
+      orchestrator-core/
+        Cargo.toml
+        src/{lib.rs,config.rs,domain.rs,ports.rs,services.rs}
+      orchestrator-db/
+        Cargo.toml
+        src/{lib.rs,schema.rs,project_repo.rs}
+      orchestrator-http/
+        Cargo.toml
+        src/lib.rs
+  ui_workbench/
+    Cargo.toml
+    crates/
+      ui-core/
+        Cargo.toml
+        src/lib.rs
+      ui-app/
+        Cargo.toml
+        Trunk.toml
+        index.html
+        src/{main.rs,app.rs}
+Scripts
+scripts/build_all.sh
+
+Builds both workspaces.
+
+scripts/run_orchestrator.sh
+
+Runs orchestrator-cli using config.toml or a given config path.
+
+scripts/dev_ui.sh
+
+Runs trunk serve in ui-app crate for Yew dev.
+
+5. How to use this skeleton
+Download the zip
+
+Download the project skeleton
+
+Unzip it somewhere:
+
+unzip video_orchestrator_workspace.zip -d avatar_video_orchestrator
+cd avatar_video_orchestrator
+Check config
+
+The generated config.toml uses:
+
+[server]
+bind_address = "127.0.0.1"
+port = 8080
+
+[storage]
+sqlite_path = "./data/video_orchestrator.sqlite3"
+assets_root = "./assets"
+Adjust hostnames/ports for your real services (LLMs, avatar, TTS, MCP).
+
+Build everything
+
+./scripts/build_all.sh
+Run the orchestrator
+
+./scripts/run_orchestrator.sh
+Then hit:
+
+curl http://127.0.0.1:8080/api/health
+# {"status":"ok"}
+And test create/list projects:
+
+curl -X POST http://127.0.0.1:8080/api/projects \
+     -H 'Content-Type: application/json' \
+     -d '{"slug":"demo-project","title":"Demo Project"}'
+
+curl http://127.0.0.1:8080/api/projects
+Run the UI workbench
+
+In another shell:
+
+./scripts/dev_ui.sh
+Requires trunk installed (cargo install trunk).
+
+Open the URL Trunk prints (typically http://127.0.0.1:8080 or 8081 depending on your config).
+
+Initially it just shows a placeholder message; next step is to wire up REST calls from ui-app to the orchestrator API.
+
+6. Next steps / how to extend this toward your full workflow
+Concrete extensions (consistent with your architecture preferences):
+
+Scene & asset domain
+
+Add Scene and Asset structs to orchestrator-core::domain.
+
+Define SceneRepository, AssetRepository traits in ports.
+
+Implement them in orchestrator-db with new tables.
+
+Expose CRUD via orchestrator-http.
+
+Orchestration workflows
+
+In orchestrator-core::services, add methods like:
+
+plan_script_from_status(project_id, llm_target)
+
+generate_avatar_assets(scene_id, services_config)
+
+schedule_scene_capture(scene_id, mcp_target)
+
+Each uses traits (e.g., LlmClient, AvatarPipelineClient), so you can:
+
+Implement real adapters in another crate later (e.g., orchestrator-adapters).
+
+Keep core logic testable with mocks.
+
+MCP/Playwright integration
+
+Add a new crate under components/orchestrator/crates:
+
+orchestrator-mcp with traits + HTTP client to your MCP server.
+
+Core uses McpClient trait; adapters call your existing Playwright flows that operate Chrome Remote Desktop sessions.
+
+UI for scenes and avatars
+
+In ui-app, add:
+
+A “Project detail” view listing scenes.
+
+A simple “Scene editor” view with:
+
+Avatar placement controls.
+
+Graphic overlay text/position.
+
+Long-term: timeline with draggable blocks.
+
+Render pipeline connection
+
+Model “render recipes” (e.g., sequences of FFmpeg steps) in orchestrator-core.
+
+Add a crate for process execution (e.g., orchestrator-render) that:
+
+Builds command lines for your existing FFmpeg chain.
+
+Tracks output files in assets table.
+
+If you’d like, the next iteration can:
+
+Add a scenes table + API.
+
+Wire the Yew app to actually call /api/projects and display real data.
+
+Sketch the traits for LlmClient, AvatarPipelineClient, TtsClient, and McpClient so you can rapidly plug in the services you already run. 
+
+
+
+No file chosenNo file chosen
+ChatGPT can make mistakes. Check important info.
+
+

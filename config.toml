@@ -1,0 +1,29 @@
+# Global configuration for the avatar-orchestrated video toolchain.
+
+[server]
+bind_address = "127.0.0.1"
+port = 8080
+
+[storage]
+sqlite_path = "./data/video_orchestrator.sqlite3"
+assets_root = "./assets"
+
+[services.llm]
+# Example endpoints; adjust to match your environment.
+cloud_primary = "https://api.example-llm.com"
+local_ollama = "http://big72:11434"
+local_llamacpp = "http://curiosity:8081"
+
+[services.avatar]
+# Image-to-avatar-video + lip-sync pipelines.
+image_to_video = "http://avatar-pipeline:9000"
+lip_sync = "http://lip-sync:9100"
+background_removal = "http://bg-removal:9200"
+
+[services.tts]
+# TTS with cloned voice.
+primary = "http://tts:9300"
+
+[services.mcp]
+# MCP/Playwright hub controlling Chrome Remote Desktop sessions.
+playwright_hub = "http://playwright-mcp:9400"

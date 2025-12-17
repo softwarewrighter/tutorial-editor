@@ -1,0 +1,11 @@
+[package]
+name = "orchestrator-db"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = { workspace = true }
+rusqlite = { workspace = true }
+time = { workspace = true }
+async-trait = "0.1"
+orchestrator-core = { path = "../orchestrator-core" }
