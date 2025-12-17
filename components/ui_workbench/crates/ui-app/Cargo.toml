@@ -11,6 +11,8 @@ wasm-bindgen = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 ui-core = { path = "../ui-core" }
+gloo-net = "0.6"
+wasm-bindgen-futures = "0.4"
 
 [build-dependencies]
 chrono = "0.4"

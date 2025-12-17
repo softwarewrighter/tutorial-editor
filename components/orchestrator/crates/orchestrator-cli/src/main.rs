@@ -1,7 +1,7 @@
 use anyhow::Result;
 use clap::Parser;
 use orchestrator_core::{AppConfig, OrchestratorApp};
-use orchestrator_db::SqliteProjectRepository;
+use orchestrator_db::{SqliteProjectRepository, SqliteSceneRepository};
 use orchestrator_http::HttpServer;
 use std::fs;
 use std::sync::Arc;
@@ -29,9 +29,13 @@ AI CODING AGENT INSTRUCTIONS:
      - [services.*]: URLs for LLM, TTS, avatar, MCP services
 
   3. API ENDPOINTS:
-     - GET  /api/health    - Health check
-     - GET  /api/projects  - List all projects
-     - POST /api/projects  - Create a new project
+     - GET    /api/health                   - Health check
+     - GET    /api/projects                 - List all projects
+     - POST   /api/projects                 - Create a project
+     - GET    /api/projects/{id}/scenes     - List scenes in project
+     - POST   /api/projects/{id}/scenes     - Create a scene
+     - PUT    /api/scenes/{id}              - Update a scene
+     - DELETE /api/scenes/{id}              - Delete a scene
 
   4. DEVELOPMENT WORKFLOW:
      - Build: cd components/orchestrator && cargo build
@@ -71,11 +75,17 @@ async fn run_server(config_path: &str) -> Result<()> {
     tracing::info!("Starting orchestrator-cli with config {config_path:?}");
 
     let config = load_config(config_path)?;
-    let repo = SqliteProjectRepository::new(&config.storage.sqlite_path)?;
-    let app = Arc::new(OrchestratorApp::new(config.clone(), Arc::new(repo)));
+    let project_repo = SqliteProjectRepository::new(&config.storage.sqlite_path)?;
+    let scene_repo = SqliteSceneRepository::new(project_repo.connection());
+    let app = Arc::new(OrchestratorApp::new(
+        config.clone(),
+        Arc::new(project_repo),
+        Arc::new(scene_repo),
+    ));
 
     let http = HttpServer::new(app);
-    http.run(&config.server.bind_address, config.server.port).await
+    http.run(&config.server.bind_address, config.server.port)
+        .await
 }
 
 fn load_config(path: &str) -> Result<AppConfig> {

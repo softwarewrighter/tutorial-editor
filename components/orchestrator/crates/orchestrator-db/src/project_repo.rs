@@ -21,6 +21,10 @@ impl SqliteProjectRepository {
             conn: Arc::new(Mutex::new(conn)),
         })
     }
+
+    pub fn connection(&self) -> Arc<Mutex<Connection>> {
+        self.conn.clone()
+    }
 }
 
 #[async_trait]

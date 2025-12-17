@@ -17,7 +17,9 @@ fn main() {
         .unwrap_or_else(|| "unknown".to_string());
 
     // Get build time
-    let build_time = chrono::Utc::now().format("%Y-%m-%d %H:%M:%S UTC").to_string();
+    let build_time = chrono::Utc::now()
+        .format("%Y-%m-%d %H:%M:%S UTC")
+        .to_string();
 
     println!("cargo:rustc-env=BUILD_COMMIT={commit}");
     println!("cargo:rustc-env=BUILD_HOST={host}");

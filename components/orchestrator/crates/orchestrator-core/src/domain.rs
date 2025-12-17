@@ -26,3 +26,31 @@ impl Project {
         }
     }
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Scene {
+    pub id: Option<i64>,
+    pub project_id: i64,
+    pub title: String,
+    pub description: Option<String>,
+    pub sort_order: i32,
+    pub script_text: Option<String>,
+    pub created_at: OffsetDateTime,
+    pub updated_at: OffsetDateTime,
+}
+
+impl Scene {
+    pub fn new(project_id: i64, title: String, sort_order: i32) -> Self {
+        let now = OffsetDateTime::now_utc();
+        Self {
+            id: None,
+            project_id,
+            title,
+            description: None,
+            sort_order,
+            script_text: None,
+            created_at: now,
+            updated_at: now,
+        }
+    }
+}

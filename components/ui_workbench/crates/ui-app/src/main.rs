@@ -1,9 +1,11 @@
 use wasm_bindgen::prelude::*;
 use yew::Renderer;
 
+mod api;
 mod app;
 mod footer;
 mod project_list;
+mod scene_list;
 
 #[wasm_bindgen(start)]
 pub fn run_app() {

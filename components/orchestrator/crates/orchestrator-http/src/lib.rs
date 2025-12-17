@@ -1,52 +1,38 @@
 mod filters;
 mod handlers;
+mod project_routes;
+mod routes;
+mod scene_routes;
 
-use filters::with_app;
-use handlers::{handle_create_project, handle_health, handle_list_projects, CreateProjectRequest};
-use orchestrator_core::{ports::ProjectRepository, OrchestratorApp};
+use orchestrator_core::{
+    OrchestratorApp,
+    ports::{ProjectRepository, SceneRepository},
+};
 use std::sync::Arc;
-use warp::Filter;
 
 #[derive(Clone)]
-pub struct HttpServer<R>
+pub struct HttpServer<P, S>
 where
-    R: ProjectRepository + 'static,
+    P: ProjectRepository + 'static,
+    S: SceneRepository + 'static,
 {
-    app: Arc<OrchestratorApp<R>>,
+    app: Arc<OrchestratorApp<P, S>>,
 }
 
-impl<R> HttpServer<R>
+impl<P, S> HttpServer<P, S>
 where
-    R: ProjectRepository + 'static,
+    P: ProjectRepository + 'static,
+    S: SceneRepository + 'static,
 {
-    pub fn new(app: Arc<OrchestratorApp<R>>) -> Self {
+    pub fn new(app: Arc<OrchestratorApp<P, S>>) -> Self {
         Self { app }
     }
 
     pub async fn run(self, bind_addr: &str, port: u16) -> anyhow::Result<()> {
-        let api = self.routes();
+        let api = routes::all(self.app);
         let addr = format!("{bind_addr}:{port}");
         tracing::info!("HTTP server listening on http://{addr}");
         warp::serve(api).run(([0, 0, 0, 0], port)).await;
         Ok(())
-    }
-
-    fn routes(self) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-        let health = warp::path!("api" / "health")
-            .and(warp::get())
-            .and_then(handle_health);
-
-        let list = warp::path!("api" / "projects")
-            .and(warp::get())
-            .and(with_app(self.app.clone()))
-            .and_then(handle_list_projects);
-
-        let create = warp::path!("api" / "projects")
-            .and(warp::post())
-            .and(with_app(self.app.clone()))
-            .and(warp::body::json::<CreateProjectRequest>())
-            .and_then(handle_create_project);
-
-        health.or(list).or(create)
     }
 }

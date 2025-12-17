@@ -8,3 +8,13 @@ pub struct ProjectDto {
     pub subtitle: Option<String>,
     pub description: Option<String>,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct SceneDto {
+    pub id: Option<i64>,
+    pub project_id: i64,
+    pub title: String,
+    pub description: Option<String>,
+    pub sort_order: i32,
+    pub script_text: Option<String>,
+}

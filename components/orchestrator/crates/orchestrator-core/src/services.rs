@@ -1,32 +1,29 @@
-use crate::{config::AppConfig, domain::Project, ports::ProjectRepository};
-use anyhow::Result;
+use crate::{
+    config::AppConfig,
+    ports::{ProjectRepository, SceneRepository},
+};
 use std::sync::Arc;
 
-pub struct OrchestratorApp<R>
+pub struct OrchestratorApp<P, S>
 where
-    R: ProjectRepository + 'static,
+    P: ProjectRepository + 'static,
+    S: SceneRepository + 'static,
 {
     pub config: AppConfig,
-    pub project_repo: Arc<R>,
+    pub project_repo: Arc<P>,
+    pub scene_repo: Arc<S>,
 }
 
-impl<R> OrchestratorApp<R>
+impl<P, S> OrchestratorApp<P, S>
 where
-    R: ProjectRepository + 'static,
+    P: ProjectRepository + 'static,
+    S: SceneRepository + 'static,
 {
-    pub fn new(config: AppConfig, project_repo: Arc<R>) -> Self {
+    pub fn new(config: AppConfig, project_repo: Arc<P>, scene_repo: Arc<S>) -> Self {
         Self {
             config,
             project_repo,
+            scene_repo,
         }
-    }
-
-    pub async fn list_projects(&self) -> Result<Vec<Project>> {
-        self.project_repo.list_projects().await
-    }
-
-    pub async fn create_project(&self, slug: String, title: String) -> Result<Project> {
-        let project = Project::new(slug, title);
-        self.project_repo.create_project(project).await
     }
 }
