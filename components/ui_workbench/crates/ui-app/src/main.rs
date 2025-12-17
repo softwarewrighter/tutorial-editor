@@ -4,7 +4,11 @@ use yew::Renderer;
 mod api;
 mod app;
 mod footer;
+mod project_form;
 mod project_list;
+mod scene_detail;
+mod scene_edit_form;
+mod scene_form;
 mod scene_list;
 
 #[wasm_bindgen(start)]

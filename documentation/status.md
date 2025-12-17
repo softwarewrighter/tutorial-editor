@@ -1,6 +1,6 @@
 # Project Status
 
-## Current Milestone: 1 - Scene Management
+## Current Milestone: 2 - Scene Detail View & Forms
 
 **Status**: COMPLETE
 
@@ -57,6 +57,24 @@
 - [x] ProjectList with on_select callback
 - [x] App state management for project selection and scene loading
 
+### Milestone 2 - Scene Detail View & Forms
+
+#### Frontend Components
+- [x] `scene_detail.rs` - Read-only scene display with script preview
+- [x] `scene_edit_form.rs` - Edit scene metadata (title, description, sort_order)
+- [x] `project_form.rs` - Create new project form
+- [x] `scene_form.rs` - Create new scene form
+- [x] `scene_list.rs` - Added on_select callback for scene selection
+
+#### App Architecture
+- [x] Modular app structure: `app/mod.rs`, `callbacks.rs`, `callbacks2.rs`, `hooks.rs`, `render.rs`
+- [x] Custom Yew hooks with `#[hook]` macro: `use_fetch_projects`, `use_fetch_scenes`
+- [x] AppCallbacks struct for centralized callback management
+- [x] Refresh trigger pattern for data reload after mutations
+
+#### API Client
+- [x] `update_scene_metadata()` function for PUT /api/scenes/{id}
+
 ## Working Features
 
 **HTTP API**:
@@ -74,20 +92,25 @@
 - Starts HTTP server with full scene CRUD
 
 **UI**:
-- Yew application with project list
+- Yew application with project list and scene list
 - Project selection triggers scene list fetch
-- API client for backend communication
+- Scene selection shows scene detail with read-only script preview
+- Project creation form with slug and title fields
+- Scene creation form with title and sort_order fields
+- Scene metadata editing form
+- API client for all backend operations
 
-## Next Milestone: 2 - Script Editor
+## Next Milestone: 3 - Asset Management
 
 **Status**: NOT STARTED
 
 ### Planned Work
-- [ ] Script text editing in scene detail view
-- [ ] Scene reordering (drag-and-drop or manual sort)
-- [ ] Project creation form in UI
-- [ ] Scene creation form in UI
-- [ ] Auto-save or explicit save for script changes
+- [ ] Asset struct and repository in backend
+- [ ] Assets table with foreign key to scenes
+- [ ] Asset CRUD HTTP endpoints
+- [ ] Asset list component in UI
+- [ ] Asset upload functionality
+- [ ] Asset preview in scene detail view
 
 ## Known Issues
 
@@ -104,6 +127,7 @@ None currently.
 | 2025-12-17 | Initial skeleton complete |
 | 2025-12-17 | Documentation suite created |
 | 2025-12-17 | Phase 1 Scene Management complete |
+| 2025-12-17 | Phase 2 Scene Detail View & Forms complete |
 
 ## Metrics
 
@@ -112,5 +136,6 @@ None currently.
 | Components | 2 |
 | Crates (orchestrator) | 4 |
 | Crates (ui_workbench) | 2 |
+| UI Modules | 11 (+ 5 app submodules) |
 | HTTP Endpoints | 7 |
 | SQLite Tables | 2 (projects, scenes) |
