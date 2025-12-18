@@ -1,5 +1,5 @@
 use crate::{
-    config::AppConfig,
+    AppConfig,
     ports::{
         AssetRepository, AvatarPipelineClient, LlmClient, McpClient, ProjectRepository,
         SceneRepository, TtsClient,

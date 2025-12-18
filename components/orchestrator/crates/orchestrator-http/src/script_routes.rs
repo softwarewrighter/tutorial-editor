@@ -1,10 +1,11 @@
-use crate::filters::with_app;
-use crate::handlers::GenerateScriptRequest;
+use crate::routes::with_app;
 use orchestrator_core::{
     OrchestratorApp,
     ports::{AssetRepository, ProjectRepository, SceneRepository},
 };
-use std::convert::Infallible;
+use orchestrator_http_handlers::{
+    GenerateScriptRequest, handle_generate_project_script, handle_generate_scene_script,
+};
 use std::sync::Arc;
 use warp::Filter;
 
@@ -47,36 +48,4 @@ where
         .and(with_app(app))
         .and(warp::body::json::<GenerateScriptRequest>())
         .and_then(handle_generate_scene_script)
-}
-
-async fn handle_generate_project_script<P, S, A>(
-    project_id: i64,
-    app: Arc<OrchestratorApp<P, S, A>>,
-    payload: GenerateScriptRequest,
-) -> Result<impl warp::Reply, Infallible>
-where
-    P: ProjectRepository + 'static,
-    S: SceneRepository + 'static,
-    A: AssetRepository + 'static,
-{
-    match app.generate_project_script(project_id, &payload.prompt).await {
-        Ok(scenes) => Ok(warp::reply::json(&scenes)),
-        Err(e) => Ok(warp::reply::json(&serde_json::json!({"error": e.to_string()}))),
-    }
-}
-
-async fn handle_generate_scene_script<P, S, A>(
-    scene_id: i64,
-    app: Arc<OrchestratorApp<P, S, A>>,
-    payload: GenerateScriptRequest,
-) -> Result<impl warp::Reply, Infallible>
-where
-    P: ProjectRepository + 'static,
-    S: SceneRepository + 'static,
-    A: AssetRepository + 'static,
-{
-    match app.generate_scene_script(scene_id, &payload.prompt).await {
-        Ok(scene) => Ok(warp::reply::json(&scene)),
-        Err(e) => Ok(warp::reply::json(&serde_json::json!({"error": e.to_string()}))),
-    }
 }

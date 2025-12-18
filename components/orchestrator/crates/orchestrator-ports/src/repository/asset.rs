@@ -1,6 +1,6 @@
-use crate::domain::Asset;
 use anyhow::Result;
 use async_trait::async_trait;
+use orchestrator_domain::Asset;
 
 #[async_trait]
 pub trait AssetRepository: Send + Sync {

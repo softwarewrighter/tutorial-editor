@@ -2,7 +2,10 @@
 members = [
     "crates/orchestrator-cli",
     "crates/orchestrator-core",
+    "crates/orchestrator-domain",
+    "crates/orchestrator-ports",
     "crates/orchestrator-http",
+    "crates/orchestrator-http-handlers",
     "crates/orchestrator-db",
     "crates/orchestrator-adapters",
 ]

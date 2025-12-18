@@ -1,9 +1,9 @@
-use crate::filters::with_app;
-use crate::handlers::{CreateProjectRequest, handle_create_project, handle_list_projects};
+use crate::routes::with_app;
 use orchestrator_core::{
     OrchestratorApp,
     ports::{AssetRepository, ProjectRepository, SceneRepository},
 };
+use orchestrator_http_handlers::{CreateProjectRequest, handle_create_project, handle_list_projects};
 use std::sync::Arc;
 use warp::Filter;
 

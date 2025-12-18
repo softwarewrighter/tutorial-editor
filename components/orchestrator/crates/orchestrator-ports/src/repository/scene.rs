@@ -1,6 +1,6 @@
-use crate::domain::Scene;
 use anyhow::Result;
 use async_trait::async_trait;
+use orchestrator_domain::Scene;
 
 #[async_trait]
 pub trait SceneRepository: Send + Sync {

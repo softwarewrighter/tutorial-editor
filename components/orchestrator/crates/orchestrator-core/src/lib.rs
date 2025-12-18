@@ -1,14 +1,16 @@
-pub mod config;
-pub mod domain;
-pub mod ports;
-pub mod prompts;
+//! Orchestrator core business logic
+
+// Re-export domain and ports from their dedicated crates
+pub use orchestrator_domain as domain;
+pub use orchestrator_domain::AppConfig;
+pub use orchestrator_ports as ports;
+pub use orchestrator_ports::{AvatarPipelineClient, LlmClient, McpClient, TtsClient};
+
 mod asset_ops;
-mod project_ops;
+mod avatar_ops;
 mod scene_ops;
 mod script_ops;
 mod service_ops;
 pub mod services;
 
-pub use config::AppConfig;
-pub use ports::{AvatarPipelineClient, LlmClient, McpClient, TtsClient};
 pub use services::OrchestratorApp;

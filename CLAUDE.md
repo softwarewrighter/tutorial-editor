@@ -27,6 +27,15 @@ cd components/ui_workbench && cargo build
 
 ## Pre-Commit Quality Process (Mandatory)
 
+**CRITICAL: All sw-checklist issues MUST be fixed before committing.** Do not accumulate tech debt. If a change introduces new warnings or failures, fix them immediately before the commit. This includes:
+
+- Module count limits (max 7 per crate)
+- Function count limits (max 7 per module)
+- Function line count limits (warn >25, fail >50)
+- File line count limits (max 350)
+
+If fixing a sw-checklist issue requires significant refactoring (e.g., splitting crates, reorganizing modules), do that refactoring as part of the same commit. Quality over speed.
+
 Run in order before every commit:
 
 ```bash
@@ -45,8 +54,10 @@ cd components/ui_workbench && cargo fmt --all
 # 4. Markdown validation
 markdown-checker -f "**/*.md"
 
-# 5. Project checklist
+# 5. Project checklist (MUST PASS with zero failures)
 sw-checklist
+# If failures exist, fix them before committing
+# Run with -v for details: sw-checklist -v
 ```
 
 ## Architecture
@@ -75,10 +86,12 @@ sw-checklist
 
 - Rust 2024 Edition
 - No TypeScript, no Python in project tree
-- Keep files under 500 lines, functions under 50 lines
+- Keep files under 350 lines, functions under 50 lines (prefer under 25)
+- Max 7 modules per crate, max 7 functions per module
 - Use inline format arguments: `format!("{name}")` not `format!("{}", name)`
 - Module docs use `//!`, item docs use `///`
 - Max 3 TODOs per file, never commit FIXMEs
+- Split large modules into focused sub-crates rather than growing complexity
 
 ## Testing
 

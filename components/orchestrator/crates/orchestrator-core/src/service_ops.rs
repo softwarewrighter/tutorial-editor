@@ -50,6 +50,14 @@ where
         client.remove_background(video).await
     }
 
+    pub async fn stretch_video(&self, video: &Path, target_duration_ms: u64) -> Result<PathBuf> {
+        let client = self
+            .avatar_client
+            .as_ref()
+            .ok_or_else(|| anyhow!("Avatar client not configured"))?;
+        client.stretch_video(video, target_duration_ms).await
+    }
+
     pub async fn capture_scene(&self, target: &SceneTarget) -> Result<PathBuf> {
         let client = self
             .mcp_client

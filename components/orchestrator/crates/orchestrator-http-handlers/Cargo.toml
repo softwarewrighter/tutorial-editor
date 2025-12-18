@@ -1,5 +1,5 @@
 [package]
-name = "orchestrator-http"
+name = "orchestrator-http-handlers"
 version = "0.1.0"
 edition = "2024"
 
@@ -8,7 +8,4 @@ anyhow = { workspace = true }
 warp = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-tokio = { workspace = true }
-tracing = { workspace = true }
 orchestrator-core = { path = "../orchestrator-core" }
-orchestrator-http-handlers = { path = "../orchestrator-http-handlers" }

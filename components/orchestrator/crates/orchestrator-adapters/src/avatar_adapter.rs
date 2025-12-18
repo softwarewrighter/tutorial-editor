@@ -1,6 +1,6 @@
 use anyhow::Result;
 use async_trait::async_trait;
-use orchestrator_core::config::AvatarServices;
+use orchestrator_core::domain::AvatarServices;
 use orchestrator_core::ports::AvatarPipelineClient;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
@@ -36,6 +36,12 @@ struct BackgroundRemovalRequest<'a> {
     video_path: &'a str,
 }
 
+#[derive(Serialize)]
+struct VideoStretchRequest<'a> {
+    video_path: &'a str,
+    target_duration_ms: u64,
+}
+
 #[derive(Deserialize)]
 struct VideoResponse {
     output_path: String,
@@ -47,6 +53,26 @@ impl AvatarPipelineClient for HttpAvatarClient {
         let url = format!("{}/generate", self.config.image_to_video);
         let request = ImageToVideoRequest {
             image_path: image_path.to_str().unwrap_or_default(),
+        };
+
+        let response = self
+            .client
+            .post(&url)
+            .json(&request)
+            .send()
+            .await?
+            .error_for_status()?
+            .json::<VideoResponse>()
+            .await?;
+
+        Ok(PathBuf::from(response.output_path))
+    }
+
+    async fn stretch_video(&self, video: &Path, target_duration_ms: u64) -> Result<PathBuf> {
+        let url = format!("{}/stretch", self.config.video_stretch);
+        let request = VideoStretchRequest {
+            video_path: video.to_str().unwrap_or_default(),
+            target_duration_ms,
         };
 
         let response = self

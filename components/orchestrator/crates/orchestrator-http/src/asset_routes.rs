@@ -1,11 +1,11 @@
-use crate::filters::with_app;
-use crate::handlers::{
-    CreateAssetRequest, UpdateAssetRequest, handle_create_asset, handle_delete_asset,
-    handle_list_project_assets, handle_list_scene_assets, handle_update_asset,
-};
+use crate::routes::with_app;
 use orchestrator_core::{
     OrchestratorApp,
     ports::{AssetRepository, ProjectRepository, SceneRepository},
+};
+use orchestrator_http_handlers::{
+    CreateAssetRequest, UpdateAssetRequest, handle_create_asset, handle_delete_asset,
+    handle_list_project_assets, handle_list_scene_assets, handle_update_asset,
 };
 use std::sync::Arc;
 use warp::Filter;

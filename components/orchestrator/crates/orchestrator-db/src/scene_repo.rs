@@ -1,5 +1,4 @@
-use crate::scene_mapping;
-use crate::timestamps;
+use crate::{format_timestamp, scene_from_row};
 use anyhow::{Context, Result};
 use async_trait::async_trait;
 use orchestrator_core::domain::Scene;
@@ -30,7 +29,7 @@ impl SceneRepository for SqliteSceneRepository {
                         created_at, updated_at
                  FROM scenes WHERE project_id = ?1 ORDER BY sort_order ASC",
             )?;
-            let rows = stmt.query_map(params![project_id], scene_mapping::from_row)?;
+            let rows = stmt.query_map(params![project_id], scene_from_row)?;
             rows.collect::<Result<Vec<_>, _>>()
                 .context("failed to collect scenes")
         })
@@ -48,7 +47,7 @@ impl SceneRepository for SqliteSceneRepository {
             )?;
             let mut rows = stmt.query(params![id])?;
             match rows.next()? {
-                Some(row) => Ok(Some(scene_mapping::from_row(row)?)),
+                Some(row) => Ok(Some(scene_from_row(row)?)),
                 None => Ok(None),
             }
         })
@@ -60,8 +59,8 @@ impl SceneRepository for SqliteSceneRepository {
         let scene_clone = scene.clone();
         let id = tokio::task::spawn_blocking(move || {
             let conn = conn.lock().unwrap();
-            let created_str = timestamps::format(scene_clone.created_at)?;
-            let updated_str = timestamps::format(scene_clone.updated_at)?;
+            let created_str = format_timestamp(scene_clone.created_at)?;
+            let updated_str = format_timestamp(scene_clone.updated_at)?;
             conn.execute(
                 "INSERT INTO scenes (project_id, title, description, sort_order,
                                      script_text, created_at, updated_at)
@@ -88,7 +87,7 @@ impl SceneRepository for SqliteSceneRepository {
         let scene_clone = scene.clone();
         tokio::task::spawn_blocking(move || {
             let conn = conn.lock().unwrap();
-            let updated_str = timestamps::format(OffsetDateTime::now_utc())?;
+            let updated_str = format_timestamp(OffsetDateTime::now_utc())?;
             conn.execute(
                 "UPDATE scenes SET title = ?1, description = ?2, sort_order = ?3,
                                    script_text = ?4, updated_at = ?5

@@ -1,6 +1,5 @@
 mod asset_routes;
-mod filters;
-mod handlers;
+mod avatar_routes;
 mod project_routes;
 mod routes;
 mod scene_routes;

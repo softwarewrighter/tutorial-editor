@@ -19,6 +19,7 @@ local_llamacpp = "http://curiosity:8081"
 image_to_video = "http://avatar-pipeline:9000"
 lip_sync = "http://lip-sync:9100"
 background_removal = "http://bg-removal:9200"
+video_stretch = "http://video-stretch:9250"
 
 [services.tts]
 # TTS with cloned voice.

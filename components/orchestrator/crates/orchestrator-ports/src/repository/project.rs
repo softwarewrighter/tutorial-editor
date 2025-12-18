@@ -1,6 +1,6 @@
-use crate::domain::Project;
 use anyhow::Result;
 use async_trait::async_trait;
+use orchestrator_domain::Project;
 
 #[async_trait]
 pub trait ProjectRepository: Send + Sync {

@@ -1,11 +1,11 @@
-use crate::filters::with_app;
-use crate::handlers::{
-    CreateSceneRequest, UpdateSceneRequest, handle_create_scene, handle_delete_scene,
-    handle_list_scenes, handle_update_scene,
-};
+use crate::routes::with_app;
 use orchestrator_core::{
     OrchestratorApp,
     ports::{AssetRepository, ProjectRepository, SceneRepository},
+};
+use orchestrator_http_handlers::{
+    CreateSceneRequest, UpdateSceneRequest, handle_create_scene, handle_delete_scene,
+    handle_list_scenes, handle_update_scene,
 };
 use std::sync::Arc;
 use warp::Filter;

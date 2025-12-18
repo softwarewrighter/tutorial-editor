@@ -33,6 +33,10 @@ impl AvatarPipelineClient for StubAvatarClient {
         Ok(PathBuf::from("/tmp/stub-avatar.mp4"))
     }
 
+    async fn stretch_video(&self, _video: &Path, _target_duration_ms: u64) -> Result<PathBuf> {
+        Ok(PathBuf::from("/tmp/stub-stretched.mp4"))
+    }
+
     async fn lip_sync(&self, _video: &Path, _audio: &Path) -> Result<PathBuf> {
         Ok(PathBuf::from("/tmp/stub-lipsync.mp4"))
     }

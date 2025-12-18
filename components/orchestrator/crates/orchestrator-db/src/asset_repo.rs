@@ -1,5 +1,4 @@
-use crate::asset_mapping;
-use crate::timestamps;
+use crate::{asset_from_row, format_timestamp};
 use anyhow::{Context, Result};
 use async_trait::async_trait;
 use orchestrator_core::domain::Asset;
@@ -30,7 +29,7 @@ impl AssetRepository for SqliteAssetRepository {
                         metadata, created_at, updated_at
                  FROM assets WHERE project_id = ?1 ORDER BY name ASC",
             )?;
-            let rows = stmt.query_map(params![project_id], asset_mapping::from_row)?;
+            let rows = stmt.query_map(params![project_id], asset_from_row)?;
             rows.collect::<Result<Vec<_>, _>>()
                 .context("failed to collect assets")
         })
@@ -46,7 +45,7 @@ impl AssetRepository for SqliteAssetRepository {
                         metadata, created_at, updated_at
                  FROM assets WHERE scene_id = ?1 ORDER BY name ASC",
             )?;
-            let rows = stmt.query_map(params![scene_id], asset_mapping::from_row)?;
+            let rows = stmt.query_map(params![scene_id], asset_from_row)?;
             rows.collect::<Result<Vec<_>, _>>()
                 .context("failed to collect assets")
         })
@@ -64,7 +63,7 @@ impl AssetRepository for SqliteAssetRepository {
             )?;
             let mut rows = stmt.query(params![id])?;
             match rows.next()? {
-                Some(row) => Ok(Some(asset_mapping::from_row(row)?)),
+                Some(row) => Ok(Some(asset_from_row(row)?)),
                 None => Ok(None),
             }
         })
@@ -76,8 +75,8 @@ impl AssetRepository for SqliteAssetRepository {
         let asset_clone = asset.clone();
         let id = tokio::task::spawn_blocking(move || {
             let conn = conn.lock().unwrap();
-            let created_str = timestamps::format(asset_clone.created_at)?;
-            let updated_str = timestamps::format(asset_clone.updated_at)?;
+            let created_str = format_timestamp(asset_clone.created_at)?;
+            let updated_str = format_timestamp(asset_clone.updated_at)?;
             conn.execute(
                 "INSERT INTO assets (project_id, scene_id, name, asset_type, file_path,
                                      url, metadata, created_at, updated_at)
@@ -106,7 +105,7 @@ impl AssetRepository for SqliteAssetRepository {
         let asset_clone = asset.clone();
         tokio::task::spawn_blocking(move || {
             let conn = conn.lock().unwrap();
-            let updated_str = timestamps::format(OffsetDateTime::now_utc())?;
+            let updated_str = format_timestamp(OffsetDateTime::now_utc())?;
             conn.execute(
                 "UPDATE assets SET name = ?1, asset_type = ?2, file_path = ?3,
                                    url = ?4, metadata = ?5, updated_at = ?6
