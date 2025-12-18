@@ -4,7 +4,6 @@ use crate::{SceneOps, SceneWriteOps};
 use anyhow::Result;
 use orchestrator_app::{AssetRepository, OrchestratorApp, ProjectRepository, SceneRepository};
 use orchestrator_domain::Scene;
-use orchestrator_ops_scene_read::SceneReadOps;
 
 impl<P, S, A> SceneWriteOps for OrchestratorApp<P, S, A>
 where
