@@ -1,14 +1,15 @@
 use crate::{
     domain::Scene,
-    ports::{ProjectRepository, SceneRepository},
+    ports::{AssetRepository, ProjectRepository, SceneRepository},
     services::OrchestratorApp,
 };
 use anyhow::Result;
 
-impl<P, S> OrchestratorApp<P, S>
+impl<P, S, A> OrchestratorApp<P, S, A>
 where
     P: ProjectRepository + 'static,
     S: SceneRepository + 'static,
+    A: AssetRepository + 'static,
 {
     pub async fn list_scenes(&self, project_id: i64) -> Result<Vec<Scene>> {
         self.scene_repo.list_scenes_by_project(project_id).await

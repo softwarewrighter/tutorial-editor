@@ -1,6 +1,6 @@
 # Project Status
 
-## Current Milestone: 2 - Scene Detail View & Forms
+## Current Milestone: 3 - Asset Management
 
 **Status**: COMPLETE
 
@@ -75,6 +75,35 @@
 #### API Client
 - [x] `update_scene_metadata()` function for PUT /api/scenes/{id}
 
+### Milestone 3 - Asset Management
+
+#### Backend (orchestrator-core)
+- [x] Asset struct in `domain.rs` with project_id, scene_id (optional), name, asset_type, file_path, url, metadata
+- [x] AssetRepository trait in `ports.rs` with CRUD methods
+- [x] `asset_ops.rs` - Service methods for asset operations
+- [x] Third generic param `A: AssetRepository` added to OrchestratorApp
+
+#### Backend (orchestrator-db)
+- [x] Assets table in `schema.rs` with foreign keys to projects and scenes
+- [x] `asset_mapping.rs` - Row mapping helper
+- [x] `asset_repo.rs` - SqliteAssetRepository implementation
+
+#### Backend (orchestrator-http)
+- [x] Asset request types (CreateAssetRequest, UpdateAssetRequest) in `handlers.rs`
+- [x] Asset handlers: list_project_assets, list_scene_assets, create, update, delete
+- [x] `asset_routes.rs` - Asset HTTP routes
+- [x] Third generic param added to all route modules
+
+#### Frontend (ui-core)
+- [x] AssetDto struct
+
+#### Frontend (ui-app)
+- [x] `asset_api.rs` - Asset API functions (fetch, create, update, delete)
+- [x] `asset_list.rs` - Asset list component with add/edit/delete actions
+- [x] `asset_form.rs` - Asset create/edit form
+- [x] `asset_callbacks.rs` - Asset callback builders
+- [x] `scene_detail.rs` - Integrated asset list with local state management
+
 ## Working Features
 
 **HTTP API**:
@@ -85,11 +114,16 @@
 - `POST /api/projects/{id}/scenes` - Create scene in project
 - `PUT /api/scenes/{id}` - Update scene
 - `DELETE /api/scenes/{id}` - Delete scene
+- `GET /api/projects/{id}/assets` - List project assets
+- `GET /api/scenes/{id}/assets` - List scene assets
+- `POST /api/assets` - Create asset
+- `PUT /api/assets/{id}` - Update asset
+- `DELETE /api/assets/{id}` - Delete asset
 
 **CLI**:
 - Loads config from file
-- Initializes SQLite database with projects and scenes tables
-- Starts HTTP server with full scene CRUD
+- Initializes SQLite database with projects, scenes, and assets tables
+- Starts HTTP server with full scene and asset CRUD
 
 **UI**:
 - Yew application with project list and scene list
@@ -98,23 +132,24 @@
 - Project creation form with slug and title fields
 - Scene creation form with title and sort_order fields
 - Scene metadata editing form
+- Asset list in scene detail with add/edit/delete functionality
+- Asset creation and editing forms
 - API client for all backend operations
 
-## Next Milestone: 3 - Asset Management
+## Next Milestone: 4 - Service Integration
 
 **Status**: NOT STARTED
 
 ### Planned Work
-- [ ] Asset struct and repository in backend
-- [ ] Assets table with foreign key to scenes
-- [ ] Asset CRUD HTTP endpoints
-- [ ] Asset list component in UI
-- [ ] Asset upload functionality
-- [ ] Asset preview in scene detail view
+- [ ] LLM service integration for script generation
+- [ ] TTS service integration for audio generation
+- [ ] Avatar service integration for video generation
+- [ ] Job queue for async processing
+- [ ] Status tracking for service operations
 
 ## Known Issues
 
-None currently.
+- **sw-checklist crate module count**: ui-app has 18 modules (max 7). This is a structural issue that would require significant refactoring to fix - either consolidating modules into fewer files or splitting into sub-crates.
 
 ## Blockers
 
@@ -128,6 +163,7 @@ None currently.
 | 2025-12-17 | Documentation suite created |
 | 2025-12-17 | Phase 1 Scene Management complete |
 | 2025-12-17 | Phase 2 Scene Detail View & Forms complete |
+| 2025-12-17 | Phase 3 Asset Management complete |
 
 ## Metrics
 
@@ -136,6 +172,6 @@ None currently.
 | Components | 2 |
 | Crates (orchestrator) | 4 |
 | Crates (ui_workbench) | 2 |
-| UI Modules | 11 (+ 5 app submodules) |
-| HTTP Endpoints | 7 |
-| SQLite Tables | 2 (projects, scenes) |
+| UI Modules | 18 (+ 5 app submodules) |
+| HTTP Endpoints | 12 |
+| SQLite Tables | 3 (projects, scenes, assets) |

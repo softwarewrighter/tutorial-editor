@@ -1,7 +1,7 @@
 use anyhow::Result;
 use clap::Parser;
 use orchestrator_core::{AppConfig, OrchestratorApp};
-use orchestrator_db::{SqliteProjectRepository, SqliteSceneRepository};
+use orchestrator_db::{SqliteAssetRepository, SqliteProjectRepository, SqliteSceneRepository};
 use orchestrator_http::HttpServer;
 use std::fs;
 use std::sync::Arc;
@@ -36,6 +36,11 @@ AI CODING AGENT INSTRUCTIONS:
      - POST   /api/projects/{id}/scenes     - Create a scene
      - PUT    /api/scenes/{id}              - Update a scene
      - DELETE /api/scenes/{id}              - Delete a scene
+     - GET    /api/projects/{id}/assets     - List project assets
+     - GET    /api/scenes/{id}/assets       - List scene assets
+     - POST   /api/assets                   - Create an asset
+     - PUT    /api/assets/{id}              - Update an asset
+     - DELETE /api/assets/{id}              - Delete an asset
 
   4. DEVELOPMENT WORKFLOW:
      - Build: cd components/orchestrator && cargo build
@@ -76,11 +81,14 @@ async fn run_server(config_path: &str) -> Result<()> {
 
     let config = load_config(config_path)?;
     let project_repo = SqliteProjectRepository::new(&config.storage.sqlite_path)?;
-    let scene_repo = SqliteSceneRepository::new(project_repo.connection());
+    let conn = project_repo.connection();
+    let scene_repo = SqliteSceneRepository::new(conn.clone());
+    let asset_repo = SqliteAssetRepository::new(conn);
     let app = Arc::new(OrchestratorApp::new(
         config.clone(),
         Arc::new(project_repo),
         Arc::new(scene_repo),
+        Arc::new(asset_repo),
     ));
 
     let http = HttpServer::new(app);

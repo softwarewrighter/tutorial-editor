@@ -18,3 +18,15 @@ pub struct SceneDto {
     pub sort_order: i32,
     pub script_text: Option<String>,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct AssetDto {
+    pub id: Option<i64>,
+    pub project_id: i64,
+    pub scene_id: Option<i64>,
+    pub name: String,
+    pub asset_type: String,
+    pub file_path: Option<String>,
+    pub url: Option<String>,
+    pub metadata: Option<String>,
+}

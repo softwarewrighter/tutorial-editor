@@ -1,14 +1,15 @@
 use crate::{
     domain::Project,
-    ports::{ProjectRepository, SceneRepository},
+    ports::{AssetRepository, ProjectRepository, SceneRepository},
     services::OrchestratorApp,
 };
 use anyhow::Result;
 
-impl<P, S> OrchestratorApp<P, S>
+impl<P, S, A> OrchestratorApp<P, S, A>
 where
     P: ProjectRepository + 'static,
     S: SceneRepository + 'static,
+    A: AssetRepository + 'static,
 {
     pub async fn list_projects(&self) -> Result<Vec<Project>> {
         self.project_repo.list_projects().await

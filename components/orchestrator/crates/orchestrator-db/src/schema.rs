@@ -29,6 +29,24 @@ pub fn init_db(conn: &Connection) -> Result<()> {
         );
 
         CREATE INDEX IF NOT EXISTS idx_scenes_project_id ON scenes(project_id);
+
+        CREATE TABLE IF NOT EXISTS assets (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            project_id INTEGER NOT NULL,
+            scene_id INTEGER,
+            name TEXT NOT NULL,
+            asset_type TEXT NOT NULL,
+            file_path TEXT,
+            url TEXT,
+            metadata TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            FOREIGN KEY (scene_id) REFERENCES scenes(id) ON DELETE CASCADE
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_assets_project_id ON assets(project_id);
+        CREATE INDEX IF NOT EXISTS idx_assets_scene_id ON assets(scene_id);
         "#,
     )?;
     Ok(())

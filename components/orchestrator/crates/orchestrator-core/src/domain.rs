@@ -54,3 +54,43 @@ impl Scene {
         }
     }
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Asset {
+    pub id: Option<i64>,
+    pub project_id: i64,
+    pub scene_id: Option<i64>,
+    pub name: String,
+    pub asset_type: String,
+    pub file_path: Option<String>,
+    pub url: Option<String>,
+    pub metadata: Option<String>,
+    pub created_at: OffsetDateTime,
+    pub updated_at: OffsetDateTime,
+}
+
+impl Asset {
+    pub fn new(
+        project_id: i64,
+        scene_id: Option<i64>,
+        name: String,
+        asset_type: String,
+        file_path: Option<String>,
+        url: Option<String>,
+        metadata: Option<String>,
+    ) -> Self {
+        let now = OffsetDateTime::now_utc();
+        Self {
+            id: None,
+            project_id,
+            scene_id,
+            name,
+            asset_type,
+            file_path,
+            url,
+            metadata,
+            created_at: now,
+            updated_at: now,
+        }
+    }
+}

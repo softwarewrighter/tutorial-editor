@@ -3,6 +3,10 @@ use yew::Renderer;
 
 mod api;
 mod app;
+mod asset_api;
+mod asset_callbacks;
+mod asset_form;
+mod asset_list;
 mod footer;
 mod project_form;
 mod project_list;

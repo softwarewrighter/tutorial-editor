@@ -1,3 +1,4 @@
+mod asset_routes;
 mod filters;
 mod handlers;
 mod project_routes;
@@ -6,25 +7,27 @@ mod scene_routes;
 
 use orchestrator_core::{
     OrchestratorApp,
-    ports::{ProjectRepository, SceneRepository},
+    ports::{AssetRepository, ProjectRepository, SceneRepository},
 };
 use std::sync::Arc;
 
 #[derive(Clone)]
-pub struct HttpServer<P, S>
+pub struct HttpServer<P, S, A>
 where
     P: ProjectRepository + 'static,
     S: SceneRepository + 'static,
+    A: AssetRepository + 'static,
 {
-    app: Arc<OrchestratorApp<P, S>>,
+    app: Arc<OrchestratorApp<P, S, A>>,
 }
 
-impl<P, S> HttpServer<P, S>
+impl<P, S, A> HttpServer<P, S, A>
 where
     P: ProjectRepository + 'static,
     S: SceneRepository + 'static,
+    A: AssetRepository + 'static,
 {
-    pub fn new(app: Arc<OrchestratorApp<P, S>>) -> Self {
+    pub fn new(app: Arc<OrchestratorApp<P, S, A>>) -> Self {
         Self { app }
     }
 

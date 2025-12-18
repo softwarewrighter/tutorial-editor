@@ -1,9 +1,12 @@
+mod asset_mapping;
+mod asset_repo;
 mod project_repo;
 mod scene_mapping;
 mod scene_repo;
 mod schema;
 mod timestamps;
 
+pub use asset_repo::SqliteAssetRepository;
 pub use project_repo::SqliteProjectRepository;
 pub use scene_repo::SqliteSceneRepository;
 pub use schema::init_db;
