@@ -1,8 +1,3 @@
 #!/usr/bin/env bash
-set -euo pipefail
-
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-APP_DIR="$ROOT_DIR/components/ui-shell/crates/ui-shell"
-
-cd "$APP_DIR"
-trunk serve
+# Deprecated: Use start_frontend.sh instead
+exec "$(dirname "${BASH_SOURCE[0]}")/start_frontend.sh" "$@"

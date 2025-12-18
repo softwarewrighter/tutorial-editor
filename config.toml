@@ -2,7 +2,7 @@
 
 [server]
 bind_address = "127.0.0.1"
-port = 8080
+port = 1145
 
 [storage]
 sqlite_path = "./data/video_orchestrator.sqlite3"

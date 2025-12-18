@@ -1,8 +1,3 @@
 #!/usr/bin/env bash
-set -euo pipefail
-
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-
-CONFIG_PATH="${1:-$ROOT_DIR/config.toml}"
-
-(cd "$ROOT_DIR/components/orch-cli" && cargo run -p orchestrator-cli -- -c "$CONFIG_PATH")
+# Deprecated: Use start_backend.sh instead
+exec "$(dirname "${BASH_SOURCE[0]}")/start_backend.sh" "$@"
