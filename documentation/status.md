@@ -1,6 +1,6 @@
 # Project Status
 
-## Current Milestone: 3 - Asset Management
+## Current Milestone: 6 - Avatar Pipeline Integration
 
 **Status**: COMPLETE
 
@@ -104,6 +104,67 @@
 - [x] `asset_callbacks.rs` - Asset callback builders
 - [x] `scene_detail.rs` - Integrated asset list with local state management
 
+### Milestone 4 - Service Integration
+
+#### Backend (orchestrator-core)
+- [x] Service client traits in `orchestrator-ports/src/services.rs`: LlmClient, TtsClient, AvatarPipelineClient, McpClient
+- [x] `service_ops.rs` - Service wrapper methods: generate_avatar_video, synthesize_speech, lip_sync_video, remove_video_background
+- [x] OrchestratorApp builder pattern with `.with_llm()`, `.with_tts()`, `.with_avatar()`, `.with_mcp()`
+- [x] Optional service clients using `Option<Arc<dyn Trait>>`
+
+#### Backend (orchestrator-adapters) - NEW CRATE
+- [x] `llm_adapter.rs` - HttpLlmClient for LLM API calls
+- [x] `tts_adapter.rs` - HttpTtsClient for TTS API calls
+- [x] `avatar_adapter.rs` - HttpAvatarClient for avatar pipeline services
+- [x] `mcp_adapter.rs` - HttpMcpClient for scene capture
+- [x] `stubs.rs` - Stub implementations for testing
+
+#### Configuration
+- [x] Service URLs in `config.toml`: llm, tts, avatar (image_to_video, lip_sync, background_removal)
+
+### Milestone 5 - Script Generation Workflow
+
+#### Backend (orchestrator-core)
+- [x] `script_ops.rs` - generate_project_script(), generate_scene_script() with prompt building
+- [x] Prompt templates with project context for LLM
+- [x] JSON response parsing into Scene objects with script_text
+
+#### Backend (orchestrator-http)
+- [x] `script_routes.rs` - Script generation endpoints
+- [x] `POST /api/projects/{id}/generate-script` - Generate full project script, auto-create scenes
+- [x] `POST /api/scenes/{id}/generate-script` - Generate/refine individual scene script
+
+### Milestone 6 - Avatar Pipeline Integration
+
+#### Backend (orchestrator-core)
+- [x] `avatar_ops.rs` - 6 pipeline orchestration methods:
+  - avatar_generate_audio (TTS)
+  - avatar_generate_video (image to video)
+  - avatar_stretch_video (match duration to audio)
+  - avatar_lip_sync (sync lips to audio)
+  - avatar_remove_background
+  - avatar_pipeline (full 5-step workflow)
+- [x] Each step creates Asset with appropriate asset_type
+
+#### Backend (orchestrator-adapters)
+- [x] stretch_video implementation in avatar_adapter.rs
+
+#### Backend (orchestrator-http)
+- [x] `avatar_routes.rs` - 6 avatar endpoints
+- [x] Request types in orchestrator-http-handlers
+
+#### Configuration
+- [x] Added `video_stretch` URL to config.toml
+
+#### Code Quality Refactoring
+- [x] Created `orchestrator-domain` crate (config + domain types)
+- [x] Created `orchestrator-ports` crate (repository + service traits)
+- [x] Created `orchestrator-http-handlers` crate (handler functions)
+- [x] Consolidated orchestrator-db helpers into lib.rs (8 → 5 modules)
+- [x] Consolidated orchestrator-http routes (9 → 7 modules)
+- [x] Reduced orchestrator-core to 7 modules
+- [x] sw-checklist: 0 failures (down from 5)
+
 ## Working Features
 
 **HTTP API**:
@@ -119,6 +180,14 @@
 - `POST /api/assets` - Create asset
 - `PUT /api/assets/{id}` - Update asset
 - `DELETE /api/assets/{id}` - Delete asset
+- `POST /api/projects/{id}/generate-script` - Generate project script via LLM
+- `POST /api/scenes/{id}/generate-script` - Generate/refine scene script
+- `POST /api/scenes/{id}/avatar/generate-audio` - TTS audio generation
+- `POST /api/scenes/{id}/avatar/generate-video` - Image to video with head movement
+- `POST /api/scenes/{id}/avatar/stretch-video` - Match video duration to audio
+- `POST /api/scenes/{id}/avatar/lip-sync` - Lip sync video to audio
+- `POST /api/scenes/{id}/avatar/remove-background` - Background removal
+- `POST /api/scenes/{id}/avatar/pipeline` - Full avatar pipeline (5 steps)
 
 **CLI**:
 - Loads config from file
@@ -136,20 +205,21 @@
 - Asset creation and editing forms
 - API client for all backend operations
 
-## Next Milestone: 4 - Service Integration
+## Next Milestone: 7 - Video Composition & Timeline
 
 **Status**: NOT STARTED
 
 ### Planned Work
-- [ ] LLM service integration for script generation
-- [ ] TTS service integration for audio generation
-- [ ] Avatar service integration for video generation
-- [ ] Job queue for async processing
-- [ ] Status tracking for service operations
+- [ ] Scene timeline composition (audio + video + overlays)
+- [ ] FFmpeg integration for video processing
+- [ ] Progress tracking for long-running operations
+- [ ] Preview generation for scenes
+- [ ] Final video export for projects
 
 ## Known Issues
 
-- **sw-checklist crate module count**: ui-app has 18 modules (max 7). This is a structural issue that would require significant refactoring to fix - either consolidating modules into fewer files or splitting into sub-crates.
+- **sw-checklist ui-app module count**: ui-app has 18 modules (max 7). This is a structural issue that would require significant refactoring to fix - either consolidating modules into fewer files or splitting into sub-crates.
+- **sw-checklist warnings**: 36 warnings remain for function LOC and module function counts (all within limits but above warning thresholds).
 
 ## Blockers
 
@@ -164,14 +234,18 @@ None currently.
 | 2025-12-17 | Phase 1 Scene Management complete |
 | 2025-12-17 | Phase 2 Scene Detail View & Forms complete |
 | 2025-12-17 | Phase 3 Asset Management complete |
+| 2025-12-17 | Phase 4 Service Integration complete |
+| 2025-12-17 | Phase 5 Script Generation Workflow complete |
+| 2025-12-17 | Phase 6 Avatar Pipeline Integration complete |
 
 ## Metrics
 
 | Metric | Value |
 |--------|-------|
 | Components | 2 |
-| Crates (orchestrator) | 4 |
+| Crates (orchestrator) | 8 |
 | Crates (ui_workbench) | 2 |
 | UI Modules | 18 (+ 5 app submodules) |
-| HTTP Endpoints | 12 |
+| HTTP Endpoints | 20 |
 | SQLite Tables | 3 (projects, scenes, assets) |
+| sw-checklist | 0 failures, 36 warnings |
