@@ -11,4 +11,4 @@ time = { workspace = true }
 tokio = { workspace = true }
 orchestrator-db-core = { path = "../orchestrator-db-core" }
 orchestrator-domain = { path = "../orchestrator-domain" }
-orchestrator-ports-repo = { path = "../orchestrator-ports-repo" }
+orchestrator-ports-scene = { path = "../orchestrator-ports-scene" }

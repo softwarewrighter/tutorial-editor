@@ -2,7 +2,9 @@
 members = [
     # Domain & Ports
     "crates/orchestrator-domain",
-    "crates/orchestrator-ports-repo",
+    "crates/orchestrator-ports-project",
+    "crates/orchestrator-ports-scene",
+    "crates/orchestrator-ports-asset",
     "crates/orchestrator-ports-services",
 
     # Adapters
@@ -28,7 +30,13 @@ members = [
 
     # HTTP
     "crates/orchestrator-http",
-    "crates/orchestrator-http-handlers",
+    "crates/orchestrator-http-core",
+    "crates/orchestrator-http-health",
+    "crates/orchestrator-http-project",
+    "crates/orchestrator-http-scene",
+    "crates/orchestrator-http-asset",
+    "crates/orchestrator-http-avatar",
+    "crates/orchestrator-http-script",
 
     # CLI
     "crates/orchestrator-cli",

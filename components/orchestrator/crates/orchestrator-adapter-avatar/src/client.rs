@@ -1,11 +1,12 @@
 //! HTTP Avatar pipeline client implementation
 
+use crate::http::post_video_request;
 use anyhow::Result;
 use async_trait::async_trait;
 use orchestrator_domain::AvatarServices;
 use orchestrator_ports_services::AvatarPipelineClient;
 use reqwest::Client;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use std::path::{Path, PathBuf};
 
 pub struct HttpAvatarClient {
@@ -44,11 +45,6 @@ struct VideoStretchRequest<'a> {
     target_duration_ms: u64,
 }
 
-#[derive(Deserialize)]
-struct VideoResponse {
-    output_path: String,
-}
-
 #[async_trait]
 impl AvatarPipelineClient for HttpAvatarClient {
     async fn generate_video(&self, image_path: &Path) -> Result<PathBuf> {
@@ -84,20 +80,4 @@ impl AvatarPipelineClient for HttpAvatarClient {
         };
         post_video_request(&self.client, &url, &request).await
     }
-}
-
-async fn post_video_request<T: Serialize>(
-    client: &Client,
-    url: &str,
-    request: &T,
-) -> Result<PathBuf> {
-    let response = client
-        .post(url)
-        .json(request)
-        .send()
-        .await?
-        .error_for_status()?
-        .json::<VideoResponse>()
-        .await?;
-    Ok(PathBuf::from(response.output_path))
 }

@@ -8,5 +8,7 @@ anyhow = { workspace = true }
 serde_json = { workspace = true }
 orchestrator-app = { path = "../orchestrator-app" }
 orchestrator-domain = { path = "../orchestrator-domain" }
-orchestrator-ports-repo = { path = "../orchestrator-ports-repo" }
+orchestrator-ports-project = { path = "../orchestrator-ports-project" }
+orchestrator-ports-scene = { path = "../orchestrator-ports-scene" }
+orchestrator-ports-asset = { path = "../orchestrator-ports-asset" }
 orchestrator-ports-services = { path = "../orchestrator-ports-services" }

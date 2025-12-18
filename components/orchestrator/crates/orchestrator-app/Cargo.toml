@@ -6,5 +6,7 @@ edition = "2024"
 [dependencies]
 anyhow = { workspace = true }
 orchestrator-domain = { path = "../orchestrator-domain" }
-orchestrator-ports-repo = { path = "../orchestrator-ports-repo" }
+orchestrator-ports-project = { path = "../orchestrator-ports-project" }
+orchestrator-ports-scene = { path = "../orchestrator-ports-scene" }
+orchestrator-ports-asset = { path = "../orchestrator-ports-asset" }
 orchestrator-ports-services = { path = "../orchestrator-ports-services" }

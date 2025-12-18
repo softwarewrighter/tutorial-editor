@@ -1,0 +1,9 @@
+[workspace]
+members = ["crates/ui-core"]
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }

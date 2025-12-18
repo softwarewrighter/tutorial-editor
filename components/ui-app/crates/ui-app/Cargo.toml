@@ -1,0 +1,19 @@
+[package]
+name = "ui-app"
+version = "0.1.0"
+edition.workspace = true
+
+[dependencies]
+ui-core = { workspace = true }
+ui-api = { workspace = true }
+ui-macros = { workspace = true }
+ui-project = { workspace = true }
+ui-scene = { workspace = true }
+ui-scene-detail = { workspace = true }
+yew = { workspace = true }
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+
+[build-dependencies]
+chrono = "0.4"
+hostname = "0.4"

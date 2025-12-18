@@ -1,5 +1,9 @@
 //! Service client trait definitions for external services
 
-mod clients;
+mod avatar;
+mod mcp;
+mod text;
 
-pub use clients::{AvatarPipelineClient, LlmClient, McpClient, TtsClient};
+pub use avatar::AvatarPipelineClient;
+pub use mcp::McpClient;
+pub use text::{LlmClient, TtsClient};

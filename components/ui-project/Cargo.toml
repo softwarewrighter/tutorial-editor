@@ -1,0 +1,12 @@
+[workspace]
+members = ["crates/ui-project"]
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+
+[workspace.dependencies]
+ui-core = { path = "../ui-core/crates/ui-core" }
+yew = { version = "0.21", features = ["csr"] }
+wasm-bindgen = "0.2"
+web-sys = { version = "0.3", features = ["HtmlInputElement"] }

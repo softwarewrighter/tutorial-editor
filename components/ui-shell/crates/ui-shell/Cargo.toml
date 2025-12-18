@@ -1,0 +1,13 @@
+[package]
+name = "ui-shell"
+version = "0.1.0"
+edition.workspace = true
+
+[[bin]]
+name = "ui-shell"
+path = "src/main.rs"
+
+[dependencies]
+ui-app = { workspace = true }
+yew = { workspace = true }
+wasm-bindgen = { workspace = true }

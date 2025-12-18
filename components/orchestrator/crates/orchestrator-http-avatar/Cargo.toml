@@ -1,0 +1,12 @@
+[package]
+name = "orchestrator-http-avatar"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+warp = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+orchestrator-app = { path = "../orchestrator-app" }
+orchestrator-http-core = { path = "../orchestrator-http-core" }
+orchestrator-avatar-pipeline = { path = "../orchestrator-avatar-pipeline" }

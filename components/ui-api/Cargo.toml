@@ -1,0 +1,12 @@
+[workspace]
+members = ["crates/ui-api"]
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+
+[workspace.dependencies]
+ui-core = { path = "../ui-core/crates/ui-core" }
+gloo-net = "0.6"
+serde_json = "1"
+wasm-bindgen-futures = "0.4"

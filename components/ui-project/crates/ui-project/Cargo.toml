@@ -1,0 +1,10 @@
+[package]
+name = "ui-project"
+version = "0.1.0"
+edition.workspace = true
+
+[dependencies]
+ui-core = { workspace = true }
+yew = { workspace = true }
+wasm-bindgen = { workspace = true }
+web-sys = { workspace = true }

@@ -1,6 +1,7 @@
 //! SQLite project repository implementation
 
+mod impl_repo;
 mod mapping;
-mod repo;
+mod struct_def;
 
-pub use repo::SqliteProjectRepository;
+pub use struct_def::SqliteProjectRepository;

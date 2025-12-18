@@ -92,6 +92,7 @@ sw-checklist
 - Module docs use `//!`, item docs use `///`
 - Max 3 TODOs per file, never commit FIXMEs
 - Split large modules into focused sub-crates rather than growing complexity
+- **lib.rs and mod.rs files must only contain `mod`, `use`, and `pub use` declarations** - no structs, impls, functions, or other logic. All implementation code belongs in separate modules.
 
 ## Testing
 
@@ -99,3 +100,32 @@ sw-checklist
 - Use `wasm-bindgen-test` for WASM-specific tests
 - Unit tests: `#[cfg(test)]` modules in same file
 - Integration tests: test database operations with `tempfile::tempdir()`
+
+## Refactoring Rules (Mandatory)
+
+**Warning count must monotonically decrease.** After every refactoring step:
+1. Run `sw-checklist` from repo root (not component directory)
+2. Warning count must be same or lower than before
+3. If count increases, revert and try different approach
+
+**Never copy code - always move:**
+- When splitting crates, DELETE source files after moving
+- Never have duplicate code in old and new locations
+- Verify warning count after each file move
+
+**Apply macros before restructuring:**
+- Use `ui-macros` to reduce function counts in place
+- Only create new components after in-place optimization fails
+- Macros reduce boilerplate without changing module structure
+
+**Bottom-up refactoring order:**
+1. Fix leaf components first (no dependencies on other project crates)
+2. Work up dependency graph level by level
+3. Use `cargo tree --workspace -e no-dev` to identify levels
+
+**Validate each step:**
+```bash
+# After EVERY refactoring step:
+sw-checklist 2>&1 | grep "Summary"
+# Expected: warning count same or lower
+```

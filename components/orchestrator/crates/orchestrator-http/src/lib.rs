@@ -1,16 +1,11 @@
-mod asset_routes;
-mod avatar_routes;
-mod project_routes;
-mod routes;
-mod scene_routes;
-mod script_routes;
+//! HTTP server for the orchestrator
 
-use orchestrator_app::{
-    OrchestratorApp,
-    ports::{AssetRepository, ProjectRepository, SceneRepository},
-};
+mod routes;
+
+use orchestrator_app::{AssetRepository, OrchestratorApp, ProjectRepository, SceneRepository};
 use std::sync::Arc;
 
+/// HTTP server wrapper
 #[derive(Clone)]
 pub struct HttpServer<P, S, A>
 where
@@ -27,10 +22,12 @@ where
     S: SceneRepository + 'static,
     A: AssetRepository + 'static,
 {
+    /// Create a new HTTP server
     pub fn new(app: Arc<OrchestratorApp<P, S, A>>) -> Self {
         Self { app }
     }
 
+    /// Run the HTTP server
     pub async fn run(self, bind_addr: &str, port: u16) -> anyhow::Result<()> {
         let api = routes::all(self.app);
         let addr = format!("{bind_addr}:{port}");

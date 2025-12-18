@@ -1,17 +1,10 @@
-use crate::asset_routes;
-use crate::avatar_routes;
-use crate::project_routes;
-use crate::scene_routes;
-use crate::script_routes;
-use orchestrator_app::{
-    OrchestratorApp,
-    ports::{AssetRepository, ProjectRepository, SceneRepository},
-};
-use orchestrator_http_handlers::handle_health;
-use std::convert::Infallible;
+//! Route composition
+
+use orchestrator_app::{AssetRepository, OrchestratorApp, ProjectRepository, SceneRepository};
 use std::sync::Arc;
 use warp::Filter;
 
+/// All API routes combined
 pub fn all<P, S, A>(
     app: Arc<OrchestratorApp<P, S, A>>,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone
@@ -20,28 +13,10 @@ where
     S: SceneRepository + 'static,
     A: AssetRepository + 'static,
 {
-    health()
-        .or(project_routes::routes(app.clone()))
-        .or(scene_routes::routes(app.clone()))
-        .or(asset_routes::routes(app.clone()))
-        .or(script_routes::routes(app.clone()))
-        .or(avatar_routes::routes(app))
-}
-
-fn health() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    warp::path!("api" / "health")
-        .and(warp::get())
-        .and_then(handle_health)
-}
-
-/// Filter to inject the app into handlers
-pub fn with_app<P, S, A>(
-    app: Arc<OrchestratorApp<P, S, A>>,
-) -> impl Filter<Extract = (Arc<OrchestratorApp<P, S, A>>,), Error = Infallible> + Clone
-where
-    P: ProjectRepository + 'static,
-    S: SceneRepository + 'static,
-    A: AssetRepository + 'static,
-{
-    warp::any().map(move || app.clone())
+    orchestrator_http_health::routes()
+        .or(orchestrator_http_project::routes(app.clone()))
+        .or(orchestrator_http_scene::routes(app.clone()))
+        .or(orchestrator_http_asset::routes(app.clone()))
+        .or(orchestrator_http_avatar::routes(app.clone()))
+        .or(orchestrator_http_script::routes(app))
 }
