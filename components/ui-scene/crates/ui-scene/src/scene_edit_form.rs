@@ -12,32 +12,20 @@ pub struct SceneEditFormProps {
 #[function_component(SceneEditForm)]
 pub fn scene_edit_form(props: &SceneEditFormProps) -> Html {
     let title = use_state(|| props.scene.title.clone());
-    let description = use_state(|| props.scene.description.clone().unwrap_or_default());
-    let sort_order = use_state(|| props.scene.sort_order);
-
+    let desc = use_state(|| props.scene.description.clone().unwrap_or_default());
+    let order = use_state(|| props.scene.sort_order);
     let on_submit = {
-        let scene = props.scene.clone();
-        let title = title.clone();
-        let description = description.clone();
-        let sort_order = *sort_order;
-        let on_save = props.on_save.clone();
+        let (s, t, d, o, cb) = (props.scene.clone(), title.clone(), desc.clone(), *order, props.on_save.clone());
         Callback::from(move |e: SubmitEvent| {
             e.prevent_default();
-            let updated = SceneDto {
-                title: (*title).clone(),
-                description: Some((*description).clone()).filter(|s| !s.is_empty()),
-                sort_order,
-                ..scene.clone()
-            };
-            on_save.emit(updated);
+            cb.emit(SceneDto { title: (*t).clone(), description: Some((*d).clone()).filter(|x| !x.is_empty()), sort_order: o, ..s.clone() });
         })
     };
-
     html! {
         <form class="scene-edit-form" onsubmit={on_submit}>
             { text_field!(title, "Title", "title", required) }
-            { textarea_field!(description, "Description", "description") }
-            { number_field!(sort_order, "Sort Order", "sort_order") }
+            { textarea_field!(desc, "Description", "description") }
+            { number_field!(order, "Sort Order", "sort_order") }
             { form_actions!(props.on_cancel) }
         </form>
     }

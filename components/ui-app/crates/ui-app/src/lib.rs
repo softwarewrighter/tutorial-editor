@@ -3,8 +3,6 @@
 mod app;
 mod callbacks;
 mod callbacks2;
-mod footer;
-mod hooks;
 mod render;
 
 pub use app::{App, AppCallbacks};

@@ -1,13 +1,7 @@
 use anyhow::Result;
 use clap::Parser;
-use orchestrator_adapter_avatar::HttpAvatarClient;
-use orchestrator_adapter_llm::HttpLlmClient;
-use orchestrator_adapter_mcp::HttpMcpClient;
-use orchestrator_adapter_tts::HttpTtsClient;
-use orchestrator_app::{AppConfig, OrchestratorApp};
-use orchestrator_db_asset::SqliteAssetRepository;
-use orchestrator_db_project::SqliteProjectRepository;
-use orchestrator_db_scene::SqliteSceneRepository;
+use orchestrator_http::HttpServer;
+use tracing_subscriber::EnvFilter;
 
 // Import ops crates to bring impl blocks into scope
 use orchestrator_avatar_service as _;
@@ -16,11 +10,8 @@ use orchestrator_ops_project as _;
 use orchestrator_ops_scene as _;
 use orchestrator_ops_asset as _;
 use orchestrator_script as _;
-use orchestrator_http::HttpServer;
-use std::fs;
-use std::sync::Arc;
-use tracing_subscriber::EnvFilter;
 
+mod setup;
 mod version;
 
 const LONG_ABOUT: &str = "\
@@ -92,39 +83,8 @@ fn init_tracing() {
 
 async fn run_server(config_path: &str) -> Result<()> {
     tracing::info!("Starting orchestrator-cli with config {config_path:?}");
-
-    let config = load_config(config_path)?;
-    let project_repo = SqliteProjectRepository::new(&config.storage.sqlite_path)?;
-    let conn = project_repo.connection();
-    let scene_repo = SqliteSceneRepository::new(conn.clone());
-    let asset_repo = SqliteAssetRepository::new(conn);
-
-    // Create service clients
-    let llm_client = Arc::new(HttpLlmClient::new(config.services.llm.cloud_primary.clone()));
-    let tts_client = Arc::new(HttpTtsClient::new(config.services.tts.primary.clone()));
-    let avatar_client = Arc::new(HttpAvatarClient::new(config.services.avatar.clone()));
-    let mcp_client = Arc::new(HttpMcpClient::new(config.services.mcp.playwright_hub.clone()));
-
-    let app = Arc::new(
-        OrchestratorApp::new(
-            config.clone(),
-            Arc::new(project_repo),
-            Arc::new(scene_repo),
-            Arc::new(asset_repo),
-        )
-        .with_llm(llm_client)
-        .with_tts(tts_client)
-        .with_avatar(avatar_client)
-        .with_mcp(mcp_client),
-    );
-
-    let http = HttpServer::new(app);
-    http.run(&config.server.bind_address, config.server.port)
-        .await
-}
-
-fn load_config(path: &str) -> Result<AppConfig> {
-    let raw = fs::read_to_string(path)?;
-    let cfg: AppConfig = toml::from_str(&raw)?;
-    Ok(cfg)
+    let config = setup::load_config(config_path)?;
+    let (p, s, a) = setup::create_repositories(&config)?;
+    let app = setup::build_app(config.clone(), p, s, a);
+    HttpServer::new(app).run(&config.server.bind_address, config.server.port).await
 }

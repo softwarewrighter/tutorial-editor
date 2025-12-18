@@ -1,9 +1,7 @@
 use ui_core::{ProjectDto, SceneDto};
 use yew::prelude::*;
 
-use crate::callbacks::build_callbacks;
-use crate::footer::Footer;
-use crate::hooks::{use_fetch_projects, use_fetch_scenes};
+use crate::callbacks::{build_callbacks, use_fetch_projects, use_fetch_scenes};
 use crate::render::{render_detail_section, render_project_section, render_scene_section};
 
 pub struct AppCallbacks {
@@ -22,33 +20,19 @@ pub struct AppCallbacks {
 
 #[function_component(App)]
 pub fn app() -> Html {
-    let projects = use_state(Vec::<ProjectDto>::new);
-    let scenes = use_state(Vec::<SceneDto>::new);
-    let selected_project = use_state(|| None::<i64>);
-    let selected_scene = use_state(|| None::<SceneDto>);
-    let show_project_form = use_state(|| false);
-    let show_scene_form = use_state(|| false);
-    let editing_scene = use_state(|| false);
-    let refresh_trigger = use_state(|| 0u32);
-
-    use_fetch_projects(&projects, *refresh_trigger);
-    use_fetch_scenes(&scenes, *selected_project, *refresh_trigger);
-
-    let callbacks = build_callbacks(
-        &selected_project,
-        &selected_scene,
-        &show_project_form,
-        &show_scene_form,
-        &editing_scene,
-        &refresh_trigger,
-    );
-
+    let (proj, scn) = (use_state(Vec::<ProjectDto>::new), use_state(Vec::<SceneDto>::new));
+    let (sel_p, sel_s) = (use_state(|| None::<i64>), use_state(|| None::<SceneDto>));
+    let (sh_p, sh_s, ed) = (use_state(|| false), use_state(|| false), use_state(|| false));
+    let rf = use_state(|| 0u32);
+    use_fetch_projects(&proj, *rf);
+    use_fetch_scenes(&scn, *sel_p, *rf);
+    let cb = build_callbacks(&sel_p, &sel_s, &sh_p, &sh_s, &ed, &rf);
     html! {
         <main class="app-root">
             <Header />
-            { render_project_section(&projects, &callbacks, *show_project_form) }
-            { render_scene_section(&scenes, &selected_project, &callbacks, *show_scene_form) }
-            { render_detail_section(&selected_scene, &callbacks, *editing_scene) }
+            { render_project_section(&proj, &cb, *sh_p) }
+            { render_scene_section(&scn, &sel_p, &cb, *sh_s) }
+            { render_detail_section(&sel_s, &cb, *ed) }
             <Footer />
         </main>
     }
@@ -61,5 +45,23 @@ fn header() -> Html {
             <h1>{ "Avatar Video Orchestrator - UI Workbench" }</h1>
             <p>{ "Select a project to view its scenes." }</p>
         </header>
+    }
+}
+
+const COPYRIGHT: &str = "Copyright (c) 2025 Michael A Wright";
+const LICENSE: &str = "MIT License";
+const REPOSITORY: &str = "https://github.com/softwarewrighter/tutorial-editor";
+const BUILD_COMMIT: &str = env!("BUILD_COMMIT");
+const BUILD_HOST: &str = env!("BUILD_HOST");
+const BUILD_TIME: &str = env!("BUILD_TIME");
+
+#[function_component(Footer)]
+pub fn footer() -> Html {
+    html! {
+        <footer class="app-footer">
+            <p>{ COPYRIGHT } { " | " } { LICENSE }</p>
+            <p>{ "Repository: " }<a href={REPOSITORY} target="_blank">{ REPOSITORY }</a></p>
+            <p>{ format!("Build: {} @ {} ({})", BUILD_COMMIT, BUILD_HOST, BUILD_TIME) }</p>
+        </footer>
     }
 }

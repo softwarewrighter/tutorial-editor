@@ -1,13 +1,12 @@
 //! Low-level avatar service operations trait definition
 
+use crate::TtsOps;
 use anyhow::Result;
 use std::path::{Path, PathBuf};
 
 /// Low-level avatar service operations trait
 #[allow(async_fn_in_trait)]
-pub trait AvatarServiceOps {
-    /// Synthesize speech from text using TTS service
-    async fn synthesize_speech(&self, text: &str) -> Result<PathBuf>;
+pub trait AvatarServiceOps: TtsOps {
     /// Generate avatar video from image
     async fn generate_avatar_video(&self, image_path: &Path) -> Result<PathBuf>;
     /// Stretch video to target duration

@@ -12,11 +12,6 @@ where
     S: SceneRepository + 'static,
     A: AssetRepository + 'static,
 {
-    async fn synthesize_speech(&self, text: &str) -> Result<PathBuf> {
-        let tts = self.tts_client.as_ref().ok_or_else(|| anyhow!("TTS client not configured"))?;
-        tts.synthesize(text).await
-    }
-
     async fn generate_avatar_video(&self, image_path: &Path) -> Result<PathBuf> {
         let avatar = self.avatar_client.as_ref().ok_or_else(|| anyhow!("Avatar client not configured"))?;
         avatar.generate_video(image_path).await

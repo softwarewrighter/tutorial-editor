@@ -58,33 +58,14 @@ fn build_on_delete(refresh: &UseStateHandle<u32>) -> Callback<i64> {
     })
 }
 
-fn build_on_save(
-    editing_asset: &UseStateHandle<Option<AssetDto>>,
-    show_form: &UseStateHandle<bool>,
-    refresh: &UseStateHandle<u32>,
-    project_id: i64,
-    scene_id: i64,
-) -> Callback<AssetDto> {
-    let editing_asset = editing_asset.clone();
-    let show_form = show_form.clone();
-    let refresh = refresh.clone();
-    Callback::from(move |mut asset: AssetDto| {
-        let editing_asset = editing_asset.clone();
-        let show_form = show_form.clone();
-        let refresh = refresh.clone();
-        asset.project_id = project_id;
-        asset.scene_id = Some(scene_id);
+fn build_on_save(ea: &UseStateHandle<Option<AssetDto>>, sf: &UseStateHandle<bool>, rf: &UseStateHandle<u32>, pid: i64, sid: i64) -> Callback<AssetDto> {
+    let (ea, sf, rf) = (ea.clone(), sf.clone(), rf.clone());
+    Callback::from(move |mut a: AssetDto| {
+        let (ea, sf, rf) = (ea.clone(), sf.clone(), rf.clone());
+        a.project_id = pid; a.scene_id = Some(sid);
         wasm_bindgen_futures::spawn_local(async move {
-            let result = if asset.id.is_some() {
-                update_asset(&asset).await
-            } else {
-                create_asset(&asset).await
-            };
-            if result.is_ok() {
-                editing_asset.set(None);
-                show_form.set(false);
-                refresh.set(*refresh + 1);
-            }
+            let ok = if a.id.is_some() { update_asset(&a).await } else { create_asset(&a).await }.is_ok();
+            if ok { ea.set(None); sf.set(false); rf.set(*rf + 1); }
         });
     })
 }

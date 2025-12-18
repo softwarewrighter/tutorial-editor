@@ -1,9 +1,7 @@
-//! Asset request handlers
+//! Asset read request handlers and types
 
-use orchestrator_app::{
-    domain::Asset, AssetRepository, OrchestratorApp, ProjectRepository, SceneRepository,
-};
-use orchestrator_ops_asset::{AssetReadOps, AssetWriteOps};
+use orchestrator_app::{AssetRepository, OrchestratorApp, ProjectRepository, SceneRepository};
+use orchestrator_ops_asset::AssetReadOps;
 use serde::Deserialize;
 use std::convert::Infallible;
 use std::sync::Arc;
@@ -40,8 +38,7 @@ where
     S: SceneRepository + 'static,
     A: AssetRepository + 'static,
 {
-    let assets = app.list_assets_by_project(project_id).await.unwrap_or_default();
-    Ok(warp::reply::json(&assets))
+    Ok(warp::reply::json(&app.list_assets_by_project(project_id).await.unwrap_or_default()))
 }
 
 /// Handle list scene assets request
@@ -54,68 +51,5 @@ where
     S: SceneRepository + 'static,
     A: AssetRepository + 'static,
 {
-    let assets = app.list_assets_by_scene(scene_id).await.unwrap_or_default();
-    Ok(warp::reply::json(&assets))
-}
-
-/// Handle create asset request
-pub async fn handle_create_asset<P, S, A>(
-    app: Arc<OrchestratorApp<P, S, A>>,
-    payload: CreateAssetRequest,
-) -> Result<impl warp::Reply, Infallible>
-where
-    P: ProjectRepository + 'static,
-    S: SceneRepository + 'static,
-    A: AssetRepository + 'static,
-{
-    let asset = Asset::new(
-        payload.project_id,
-        payload.scene_id,
-        payload.name,
-        payload.asset_type,
-        payload.file_path,
-        payload.url,
-        payload.metadata,
-    );
-    let created = app.create_asset(asset).await.unwrap();
-    Ok(warp::reply::json(&created))
-}
-
-/// Handle update asset request
-pub async fn handle_update_asset<P, S, A>(
-    id: i64,
-    app: Arc<OrchestratorApp<P, S, A>>,
-    payload: UpdateAssetRequest,
-) -> Result<impl warp::Reply, Infallible>
-where
-    P: ProjectRepository + 'static,
-    S: SceneRepository + 'static,
-    A: AssetRepository + 'static,
-{
-    let existing = app.get_asset(id).await.unwrap();
-    if let Some(mut asset) = existing {
-        asset.name = payload.name;
-        asset.asset_type = payload.asset_type;
-        asset.file_path = payload.file_path;
-        asset.url = payload.url;
-        asset.metadata = payload.metadata;
-        let updated = app.update_asset(asset).await.unwrap();
-        Ok(warp::reply::json(&updated))
-    } else {
-        Ok(warp::reply::json(&serde_json::json!({"error": "not found"})))
-    }
-}
-
-/// Handle delete asset request
-pub async fn handle_delete_asset<P, S, A>(
-    id: i64,
-    app: Arc<OrchestratorApp<P, S, A>>,
-) -> Result<impl warp::Reply, Infallible>
-where
-    P: ProjectRepository + 'static,
-    S: SceneRepository + 'static,
-    A: AssetRepository + 'static,
-{
-    app.delete_asset(id).await.unwrap();
-    Ok(warp::reply::json(&serde_json::json!({"deleted": true})))
+    Ok(warp::reply::json(&app.list_assets_by_scene(scene_id).await.unwrap_or_default()))
 }

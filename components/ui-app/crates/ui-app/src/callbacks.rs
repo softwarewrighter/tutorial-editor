@@ -1,5 +1,7 @@
-use ui_core::SceneDto;
+use ui_api::{fetch_projects, fetch_scenes};
+use ui_core::{ProjectDto, SceneDto};
 use ui_macros::{hide_callback, show_callback, some_callback};
+use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 
 use crate::app::AppCallbacks;
@@ -28,14 +30,22 @@ pub fn build_callbacks(
     }
 }
 
-fn build_project_select(
-    selected_project: &UseStateHandle<Option<i64>>,
-    selected_scene: &UseStateHandle<Option<SceneDto>>,
-) -> Callback<i64> {
-    let sp = selected_project.clone();
-    let ss = selected_scene.clone();
-    Callback::from(move |id: i64| {
-        sp.set(Some(id));
-        ss.set(None);
-    })
+fn build_project_select(sp: &UseStateHandle<Option<i64>>, ss: &UseStateHandle<Option<SceneDto>>) -> Callback<i64> {
+    let (sp, ss) = (sp.clone(), ss.clone());
+    Callback::from(move |id: i64| { sp.set(Some(id)); ss.set(None); })
+}
+
+#[hook]
+pub fn use_fetch_projects(projects: &UseStateHandle<Vec<ProjectDto>>, trigger: u32) {
+    let p = projects.clone();
+    use_effect_with(trigger, move |_| { spawn_local(async move { if let Ok(d) = fetch_projects().await { p.set(d); } }); });
+}
+
+#[hook]
+pub fn use_fetch_scenes(scenes: &UseStateHandle<Vec<SceneDto>>, project_id: Option<i64>, trigger: u32) {
+    let s = scenes.clone();
+    use_effect_with((project_id, trigger), move |(pid, _)| {
+        if let Some(id) = *pid { let s = s.clone(); spawn_local(async move { if let Ok(d) = fetch_scenes(id).await { s.set(d); } }); }
+        else { s.set(vec![]); }
+    });
 }

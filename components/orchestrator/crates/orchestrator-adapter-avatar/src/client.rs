@@ -1,27 +1,12 @@
 //! HTTP Avatar pipeline client implementation
 
 use crate::http::post_video_request;
+use crate::HttpAvatarClient;
 use anyhow::Result;
 use async_trait::async_trait;
-use orchestrator_domain::AvatarServices;
 use orchestrator_ports_services::AvatarPipelineClient;
-use reqwest::Client;
 use serde::Serialize;
 use std::path::{Path, PathBuf};
-
-pub struct HttpAvatarClient {
-    client: Client,
-    config: AvatarServices,
-}
-
-impl HttpAvatarClient {
-    pub fn new(config: AvatarServices) -> Self {
-        Self {
-            client: Client::new(),
-            config,
-        }
-    }
-}
 
 #[derive(Serialize)]
 struct ImageToVideoRequest<'a> {

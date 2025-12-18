@@ -45,31 +45,22 @@ fn render_assets(
     }
 }
 
-fn render_asset_item(
-    asset: &AssetDto,
-    on_edit: &Callback<AssetDto>,
-    on_delete: &Callback<i64>,
-) -> Html {
-    let asset_id = asset.id.unwrap_or(0);
-    let edit_asset = asset.clone();
-    let on_edit = on_edit.clone();
-    let on_delete = on_delete.clone();
-
-    let on_edit_click = Callback::from(move |_| on_edit.emit(edit_asset.clone()));
-    let on_delete_click = Callback::from(move |_| on_delete.emit(asset_id));
-
-    let type_badge = format!("asset-type-{}", asset.asset_type.to_lowercase());
-
+fn render_asset_item(a: &AssetDto, on_edit: &Callback<AssetDto>, on_del: &Callback<i64>) -> Html {
+    let (id, ea) = (a.id.unwrap_or(0), a.clone());
+    let (oe, od) = (on_edit.clone(), on_del.clone());
+    let ec = Callback::from(move |_| oe.emit(ea.clone()));
+    let dc = Callback::from(move |_| od.emit(id));
+    let tb = format!("asset-type-{}", a.asset_type.to_lowercase());
     html! {
         <li class="asset-item">
             <div class="asset-info">
-                <span class={classes!("asset-type-badge", type_badge)}>{ &asset.asset_type }</span>
-                <span class="asset-name">{ &asset.name }</span>
-                { render_asset_location(asset) }
+                <span class={classes!("asset-type-badge", tb)}>{ &a.asset_type }</span>
+                <span class="asset-name">{ &a.name }</span>
+                { render_asset_location(a) }
             </div>
             <div class="asset-actions">
-                <button class="edit-btn" onclick={on_edit_click}>{ "Edit" }</button>
-                <button class="delete-btn" onclick={on_delete_click}>{ "Delete" }</button>
+                <button class="edit-btn" onclick={ec}>{ "Edit" }</button>
+                <button class="delete-btn" onclick={dc}>{ "Delete" }</button>
             </div>
         </li>
     }

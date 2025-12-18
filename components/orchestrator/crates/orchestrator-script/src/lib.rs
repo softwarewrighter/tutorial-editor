@@ -1,6 +1,7 @@
 //! Script generation operations for OrchestratorApp
 
-mod generation;
+mod ops_impl;
+mod ops_trait;
 mod prompts;
 
-pub use generation::ScriptOps;
+pub use ops_trait::ScriptOps;

@@ -2,7 +2,7 @@
 
 use anyhow::{anyhow, Result};
 use orchestrator_app::{AssetRepository, OrchestratorApp, ProjectRepository, SceneRepository};
-use orchestrator_avatar_service::AvatarServiceOps;
+use orchestrator_avatar_service::{AvatarServiceOps, TtsOps};
 use orchestrator_domain::Asset;
 use orchestrator_ops_asset::{AssetReadOps, AssetWriteOps};
 use orchestrator_ops_scene::SceneReadOps;

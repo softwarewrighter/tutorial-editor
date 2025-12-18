@@ -9,34 +9,19 @@ use orchestrator_ports_asset::AssetWriteOps;
 use rusqlite::params;
 use time::OffsetDateTime;
 
+const INSERT_SQL: &str = "INSERT INTO assets (project_id, scene_id, name, asset_type, file_path, url, metadata, created_at, updated_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)";
+
 #[async_trait]
 impl AssetWriteOps for SqliteAssetRepository {
     async fn create_asset(&self, mut asset: Asset) -> Result<Asset> {
         let conn = self.conn.clone();
         let a = asset.clone();
         let id = tokio::task::spawn_blocking(move || {
-            let conn = conn.lock().unwrap();
-            let created = format_timestamp(a.created_at)?;
-            let updated = format_timestamp(a.updated_at)?;
-            conn.execute(
-                "INSERT INTO assets (project_id, scene_id, name, asset_type, file_path, url,
-                                     metadata, created_at, updated_at)
-                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
-                params![
-                    a.project_id,
-                    a.scene_id,
-                    a.name,
-                    a.asset_type,
-                    a.file_path,
-                    a.url,
-                    a.metadata,
-                    created,
-                    updated
-                ],
-            )?;
-            Ok::<i64, anyhow::Error>(conn.last_insert_rowid())
-        })
-        .await??;
+            let c = conn.lock().unwrap();
+            let (cr, up) = (format_timestamp(a.created_at)?, format_timestamp(a.updated_at)?);
+            c.execute(INSERT_SQL, params![a.project_id, a.scene_id, a.name, a.asset_type, a.file_path, a.url, a.metadata, cr, up])?;
+            Ok::<i64, anyhow::Error>(c.last_insert_rowid())
+        }).await??;
         asset.id = Some(id);
         Ok(asset)
     }

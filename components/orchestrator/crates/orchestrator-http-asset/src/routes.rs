@@ -6,9 +6,9 @@ use std::sync::Arc;
 use warp::Filter;
 
 use crate::handler::{
-    handle_create_asset, handle_delete_asset, handle_list_project_assets, handle_list_scene_assets,
-    handle_update_asset, CreateAssetRequest, UpdateAssetRequest,
+    handle_list_project_assets, handle_list_scene_assets, CreateAssetRequest, UpdateAssetRequest,
 };
+use crate::handler_write::{handle_create_asset, handle_delete_asset, handle_update_asset};
 
 /// All asset routes
 pub fn routes<P, S, A>(
