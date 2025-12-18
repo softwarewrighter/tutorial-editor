@@ -19,14 +19,10 @@ where
     S: SceneRepository + 'static,
     A: AssetRepository + 'static,
 {
-    list_by_project(app.clone())
-        .or(list_by_scene(app.clone()))
-        .or(create(app.clone()))
-        .or(update(app.clone()))
-        .or(delete(app))
+    read_routes(app.clone()).or(write_routes(app))
 }
 
-fn list_by_project<P, S, A>(
+fn read_routes<P, S, A>(
     app: Arc<OrchestratorApp<P, S, A>>,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone
 where
@@ -34,13 +30,18 @@ where
     S: SceneRepository + 'static,
     A: AssetRepository + 'static,
 {
-    warp::path!("api" / "projects" / i64 / "assets")
+    let list_by_project = warp::path!("api" / "projects" / i64 / "assets")
+        .and(warp::get())
+        .and(with_app(app.clone()))
+        .and_then(handle_list_project_assets);
+    let list_by_scene = warp::path!("api" / "scenes" / i64 / "assets")
         .and(warp::get())
         .and(with_app(app))
-        .and_then(handle_list_project_assets)
+        .and_then(handle_list_scene_assets);
+    list_by_project.or(list_by_scene)
 }
 
-fn list_by_scene<P, S, A>(
+fn write_routes<P, S, A>(
     app: Arc<OrchestratorApp<P, S, A>>,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone
 where
@@ -48,52 +49,19 @@ where
     S: SceneRepository + 'static,
     A: AssetRepository + 'static,
 {
-    warp::path!("api" / "scenes" / i64 / "assets")
-        .and(warp::get())
-        .and(with_app(app))
-        .and_then(handle_list_scene_assets)
-}
-
-fn create<P, S, A>(
-    app: Arc<OrchestratorApp<P, S, A>>,
-) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone
-where
-    P: ProjectRepository + 'static,
-    S: SceneRepository + 'static,
-    A: AssetRepository + 'static,
-{
-    warp::path!("api" / "assets")
+    let create = warp::path!("api" / "assets")
         .and(warp::post())
-        .and(with_app(app))
+        .and(with_app(app.clone()))
         .and(warp::body::json::<CreateAssetRequest>())
-        .and_then(handle_create_asset)
-}
-
-fn update<P, S, A>(
-    app: Arc<OrchestratorApp<P, S, A>>,
-) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone
-where
-    P: ProjectRepository + 'static,
-    S: SceneRepository + 'static,
-    A: AssetRepository + 'static,
-{
-    warp::path!("api" / "assets" / i64)
+        .and_then(handle_create_asset);
+    let update = warp::path!("api" / "assets" / i64)
         .and(warp::put())
-        .and(with_app(app))
+        .and(with_app(app.clone()))
         .and(warp::body::json::<UpdateAssetRequest>())
-        .and_then(handle_update_asset)
-}
-
-fn delete<P, S, A>(
-    app: Arc<OrchestratorApp<P, S, A>>,
-) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone
-where
-    P: ProjectRepository + 'static,
-    S: SceneRepository + 'static,
-    A: AssetRepository + 'static,
-{
-    warp::path!("api" / "assets" / i64)
+        .and_then(handle_update_asset);
+    let delete = warp::path!("api" / "assets" / i64)
         .and(warp::delete())
         .and(with_app(app))
-        .and_then(handle_delete_asset)
+        .and_then(handle_delete_asset);
+    create.or(update).or(delete)
 }

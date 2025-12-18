@@ -16,21 +16,11 @@ impl SceneWriteOps for SqliteSceneRepository {
         let s = scene.clone();
         let id = tokio::task::spawn_blocking(move || {
             let conn = conn.lock().unwrap();
-            let created = format_timestamp(s.created_at)?;
-            let updated = format_timestamp(s.updated_at)?;
+            let (created, updated) = (format_timestamp(s.created_at)?, format_timestamp(s.updated_at)?);
             conn.execute(
-                "INSERT INTO scenes (project_id, title, description, sort_order,
-                                     script_text, created_at, updated_at)
+                "INSERT INTO scenes (project_id, title, description, sort_order, script_text, created_at, updated_at)
                  VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
-                params![
-                    s.project_id,
-                    s.title,
-                    s.description,
-                    s.sort_order,
-                    s.script_text,
-                    created,
-                    updated
-                ],
+                params![s.project_id, s.title, s.description, s.sort_order, s.script_text, created, updated],
             )?;
             Ok::<i64, anyhow::Error>(conn.last_insert_rowid())
         })

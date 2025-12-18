@@ -1,5 +1,6 @@
 use ui_api::{create_asset, delete_asset, update_asset};
 use ui_core::AssetDto;
+use ui_macros::{hide_callback, none_callback, set_callback};
 use yew::prelude::*;
 
 pub struct AssetCallbacks {
@@ -17,18 +18,20 @@ pub fn build_asset_callbacks(
     project_id: i64,
     scene_id: i64,
 ) -> AssetCallbacks {
+    let cancel_editing = none_callback!(editing_asset);
+    let cancel_form = hide_callback!(show_form);
     AssetCallbacks {
-        on_add: build_on_add(show_form),
+        on_add: set_callback!(show_form, true),
         on_edit: build_on_edit(editing_asset, show_form),
         on_delete: build_on_delete(refresh),
         on_save: build_on_save(editing_asset, show_form, refresh, project_id, scene_id),
-        on_cancel: build_on_cancel(editing_asset, show_form),
+        on_cancel: {
+            Callback::from(move |_| {
+                cancel_editing.emit(());
+                cancel_form.emit(());
+            })
+        },
     }
-}
-
-fn build_on_add(show_form: &UseStateHandle<bool>) -> Callback<()> {
-    let show_form = show_form.clone();
-    Callback::from(move |_| show_form.set(true))
 }
 
 fn build_on_edit(
@@ -65,21 +68,17 @@ fn build_on_save(
     let editing_asset = editing_asset.clone();
     let show_form = show_form.clone();
     let refresh = refresh.clone();
-    Callback::from(move |asset: AssetDto| {
+    Callback::from(move |mut asset: AssetDto| {
         let editing_asset = editing_asset.clone();
         let show_form = show_form.clone();
         let refresh = refresh.clone();
+        asset.project_id = project_id;
+        asset.scene_id = Some(scene_id);
         wasm_bindgen_futures::spawn_local(async move {
             let result = if asset.id.is_some() {
-                update_asset(
-                    asset.id.unwrap(), &asset.name, &asset.asset_type,
-                    asset.file_path.as_deref(), asset.url.as_deref(), asset.metadata.as_deref(),
-                ).await
+                update_asset(&asset).await
             } else {
-                create_asset(
-                    project_id, Some(scene_id), &asset.name, &asset.asset_type,
-                    asset.file_path.as_deref(), asset.url.as_deref(), asset.metadata.as_deref(),
-                ).await
+                create_asset(&asset).await
             };
             if result.is_ok() {
                 editing_asset.set(None);
@@ -90,14 +89,3 @@ fn build_on_save(
     })
 }
 
-fn build_on_cancel(
-    editing_asset: &UseStateHandle<Option<AssetDto>>,
-    show_form: &UseStateHandle<bool>,
-) -> Callback<()> {
-    let editing_asset = editing_asset.clone();
-    let show_form = show_form.clone();
-    Callback::from(move |_| {
-        editing_asset.set(None);
-        show_form.set(false);
-    })
-}

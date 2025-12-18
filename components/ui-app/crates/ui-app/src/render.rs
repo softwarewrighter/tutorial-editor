@@ -15,21 +15,19 @@ pub fn render_project_section(
         <section class="project-section">
             <h2>{ "Projects" }</h2>
             <button onclick={callbacks.on_show_project_form.clone()}>{ "New Project" }</button>
-            { if show_form { render_project_form(callbacks) } else { html!{} } }
+            { if show_form {
+                html! {
+                    <ProjectForm
+                        on_submit={callbacks.on_project_submit.clone()}
+                        on_cancel={callbacks.on_cancel_project_form.clone()}
+                    />
+                }
+            } else { html!{} } }
             <ProjectList
                 projects={projects.to_vec()}
                 on_select={callbacks.on_project_select.clone()}
             />
         </section>
-    }
-}
-
-fn render_project_form(callbacks: &AppCallbacks) -> Html {
-    html! {
-        <ProjectForm
-            on_submit={callbacks.on_project_submit.clone()}
-            on_cancel={callbacks.on_cancel_project_form.clone()}
-        />
     }
 }
 
@@ -46,18 +44,16 @@ pub fn render_scene_section(
         <section class="scene-section">
             <h2>{ "Scenes" }</h2>
             <button onclick={callbacks.on_show_scene_form.clone()}>{ "New Scene" }</button>
-            { if show_form { render_scene_form(callbacks) } else { html!{} } }
+            { if show_form {
+                html! {
+                    <SceneForm
+                        on_submit={callbacks.on_scene_submit.clone()}
+                        on_cancel={callbacks.on_cancel_scene_form.clone()}
+                    />
+                }
+            } else { html!{} } }
             <SceneList scenes={scenes.to_vec()} on_select={callbacks.on_scene_select.clone()} />
         </section>
-    }
-}
-
-fn render_scene_form(callbacks: &AppCallbacks) -> Html {
-    html! {
-        <SceneForm
-            on_submit={callbacks.on_scene_submit.clone()}
-            on_cancel={callbacks.on_cancel_scene_form.clone()}
-        />
     }
 }
 
