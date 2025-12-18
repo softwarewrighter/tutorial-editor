@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-APP_DIR="$ROOT_DIR/components/ui_workbench/crates/ui-app"
+APP_DIR="$ROOT_DIR/components/ui-shell/crates/ui-shell"
 
 cd "$APP_DIR"
 trunk serve
