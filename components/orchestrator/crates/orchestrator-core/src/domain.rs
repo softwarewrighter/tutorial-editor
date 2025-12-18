@@ -94,3 +94,21 @@ impl Asset {
         }
     }
 }
+
+/// Target specification for MCP/Playwright screen capture
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SceneTarget {
+    pub url: String,
+    pub actions: Vec<SceneAction>,
+    pub width: u32,
+    pub height: u32,
+}
+
+/// Actions to perform during scene capture
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum SceneAction {
+    Click { selector: String },
+    Type { selector: String, text: String },
+    Wait { duration_ms: u64 },
+    Screenshot,
+}

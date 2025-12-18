@@ -1,5 +1,6 @@
 use anyhow::Result;
 use clap::Parser;
+use orchestrator_adapters::{HttpAvatarClient, HttpLlmClient, HttpMcpClient, HttpTtsClient};
 use orchestrator_core::{AppConfig, OrchestratorApp};
 use orchestrator_db::{SqliteAssetRepository, SqliteProjectRepository, SqliteSceneRepository};
 use orchestrator_http::HttpServer;
@@ -84,12 +85,25 @@ async fn run_server(config_path: &str) -> Result<()> {
     let conn = project_repo.connection();
     let scene_repo = SqliteSceneRepository::new(conn.clone());
     let asset_repo = SqliteAssetRepository::new(conn);
-    let app = Arc::new(OrchestratorApp::new(
-        config.clone(),
-        Arc::new(project_repo),
-        Arc::new(scene_repo),
-        Arc::new(asset_repo),
-    ));
+
+    // Create service clients
+    let llm_client = Arc::new(HttpLlmClient::new(config.services.llm.cloud_primary.clone()));
+    let tts_client = Arc::new(HttpTtsClient::new(config.services.tts.primary.clone()));
+    let avatar_client = Arc::new(HttpAvatarClient::new(config.services.avatar.clone()));
+    let mcp_client = Arc::new(HttpMcpClient::new(config.services.mcp.playwright_hub.clone()));
+
+    let app = Arc::new(
+        OrchestratorApp::new(
+            config.clone(),
+            Arc::new(project_repo),
+            Arc::new(scene_repo),
+            Arc::new(asset_repo),
+        )
+        .with_llm(llm_client)
+        .with_tts(tts_client)
+        .with_avatar(avatar_client)
+        .with_mcp(mcp_client),
+    );
 
     let http = HttpServer::new(app);
     http.run(&config.server.bind_address, config.server.port)

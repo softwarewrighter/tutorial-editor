@@ -16,6 +16,7 @@ tracing-subscriber = { workspace = true }
 orchestrator-core = { path = "../orchestrator-core" }
 orchestrator-db = { path = "../orchestrator-db" }
 orchestrator-http = { path = "../orchestrator-http" }
+orchestrator-adapters = { path = "../orchestrator-adapters" }
 
 [build-dependencies]
 chrono = "0.4"
