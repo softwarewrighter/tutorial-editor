@@ -5,7 +5,7 @@ mod routes;
 mod scene_routes;
 mod script_routes;
 
-use orchestrator_core::{
+use orchestrator_app::{
     OrchestratorApp,
     ports::{AssetRepository, ProjectRepository, SceneRepository},
 };

@@ -1,8 +1,9 @@
-use orchestrator_core::{
+use orchestrator_app::{
     OrchestratorApp,
     domain::Scene,
     ports::{AssetRepository, ProjectRepository, SceneRepository},
 };
+use orchestrator_ops_scene::{SceneReadOps, SceneWriteOps};
 use serde::Deserialize;
 use std::convert::Infallible;
 use std::sync::Arc;
@@ -30,7 +31,7 @@ where
     S: SceneRepository + 'static,
     A: AssetRepository + 'static,
 {
-    let scenes = app.list_scenes(project_id).await.unwrap_or_default();
+    let scenes = app.list_scenes_by_project(project_id).await.unwrap_or_default();
     Ok(warp::reply::json(&scenes))
 }
 

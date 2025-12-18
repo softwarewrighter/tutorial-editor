@@ -1,5 +1,5 @@
 use crate::routes::with_app;
-use orchestrator_core::{
+use orchestrator_app::{
     OrchestratorApp,
     ports::{AssetRepository, ProjectRepository, SceneRepository},
 };

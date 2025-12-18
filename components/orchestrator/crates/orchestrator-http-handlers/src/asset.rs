@@ -1,8 +1,9 @@
-use orchestrator_core::{
+use orchestrator_app::{
     OrchestratorApp,
     domain::Asset,
     ports::{AssetRepository, ProjectRepository, SceneRepository},
 };
+use orchestrator_ops_asset::{AssetReadOps, AssetWriteOps};
 use serde::Deserialize;
 use std::convert::Infallible;
 use std::sync::Arc;
@@ -36,7 +37,7 @@ where
     S: SceneRepository + 'static,
     A: AssetRepository + 'static,
 {
-    let assets = app.list_project_assets(project_id).await.unwrap_or_default();
+    let assets = app.list_assets_by_project(project_id).await.unwrap_or_default();
     Ok(warp::reply::json(&assets))
 }
 
@@ -49,7 +50,7 @@ where
     S: SceneRepository + 'static,
     A: AssetRepository + 'static,
 {
-    let assets = app.list_scene_assets(scene_id).await.unwrap_or_default();
+    let assets = app.list_assets_by_scene(scene_id).await.unwrap_or_default();
     Ok(warp::reply::json(&assets))
 }
 

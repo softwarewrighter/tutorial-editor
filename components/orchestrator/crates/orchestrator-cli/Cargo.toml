@@ -13,10 +13,21 @@ toml = { workspace = true }
 tokio = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
-orchestrator-core = { path = "../orchestrator-core" }
-orchestrator-db = { path = "../orchestrator-db" }
+orchestrator-app = { path = "../orchestrator-app" }
+orchestrator-ops-project = { path = "../orchestrator-ops-project" }
+orchestrator-ops-scene = { path = "../orchestrator-ops-scene" }
+orchestrator-ops-asset = { path = "../orchestrator-ops-asset" }
+orchestrator-avatar-service = { path = "../orchestrator-avatar-service" }
+orchestrator-avatar-pipeline = { path = "../orchestrator-avatar-pipeline" }
+orchestrator-script = { path = "../orchestrator-script" }
+orchestrator-db-project = { path = "../orchestrator-db-project" }
+orchestrator-db-scene = { path = "../orchestrator-db-scene" }
+orchestrator-db-asset = { path = "../orchestrator-db-asset" }
 orchestrator-http = { path = "../orchestrator-http" }
-orchestrator-adapters = { path = "../orchestrator-adapters" }
+orchestrator-adapter-llm = { path = "../orchestrator-adapter-llm" }
+orchestrator-adapter-tts = { path = "../orchestrator-adapter-tts" }
+orchestrator-adapter-avatar = { path = "../orchestrator-adapter-avatar" }
+orchestrator-adapter-mcp = { path = "../orchestrator-adapter-mcp" }
 
 [build-dependencies]
 chrono = "0.4"

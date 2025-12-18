@@ -3,7 +3,7 @@ use crate::avatar_routes;
 use crate::project_routes;
 use crate::scene_routes;
 use crate::script_routes;
-use orchestrator_core::{
+use orchestrator_app::{
     OrchestratorApp,
     ports::{AssetRepository, ProjectRepository, SceneRepository},
 };

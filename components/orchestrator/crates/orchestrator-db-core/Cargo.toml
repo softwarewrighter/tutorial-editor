@@ -1,0 +1,9 @@
+[package]
+name = "orchestrator-db-core"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = { workspace = true }
+rusqlite = { workspace = true }
+time = { workspace = true }

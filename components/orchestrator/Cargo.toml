@@ -1,13 +1,37 @@
 [workspace]
 members = [
-    "crates/orchestrator-cli",
-    "crates/orchestrator-core",
+    # Domain & Ports
     "crates/orchestrator-domain",
-    "crates/orchestrator-ports",
+    "crates/orchestrator-ports-repo",
+    "crates/orchestrator-ports-services",
+
+    # Adapters
+    "crates/orchestrator-adapter-llm",
+    "crates/orchestrator-adapter-tts",
+    "crates/orchestrator-adapter-avatar",
+    "crates/orchestrator-adapter-mcp",
+
+    # Database
+    "crates/orchestrator-db-core",
+    "crates/orchestrator-db-project",
+    "crates/orchestrator-db-scene",
+    "crates/orchestrator-db-asset",
+
+    # Application
+    "crates/orchestrator-app",
+    "crates/orchestrator-ops-project",
+    "crates/orchestrator-ops-scene",
+    "crates/orchestrator-ops-asset",
+    "crates/orchestrator-avatar-service",
+    "crates/orchestrator-avatar-pipeline",
+    "crates/orchestrator-script",
+
+    # HTTP
     "crates/orchestrator-http",
     "crates/orchestrator-http-handlers",
-    "crates/orchestrator-db",
-    "crates/orchestrator-adapters",
+
+    # CLI
+    "crates/orchestrator-cli",
 ]
 resolver = "2"
 

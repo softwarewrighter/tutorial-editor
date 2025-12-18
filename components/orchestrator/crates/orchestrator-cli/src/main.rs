@@ -1,8 +1,21 @@
 use anyhow::Result;
 use clap::Parser;
-use orchestrator_adapters::{HttpAvatarClient, HttpLlmClient, HttpMcpClient, HttpTtsClient};
-use orchestrator_core::{AppConfig, OrchestratorApp};
-use orchestrator_db::{SqliteAssetRepository, SqliteProjectRepository, SqliteSceneRepository};
+use orchestrator_adapter_avatar::HttpAvatarClient;
+use orchestrator_adapter_llm::HttpLlmClient;
+use orchestrator_adapter_mcp::HttpMcpClient;
+use orchestrator_adapter_tts::HttpTtsClient;
+use orchestrator_app::{AppConfig, OrchestratorApp};
+use orchestrator_db_asset::SqliteAssetRepository;
+use orchestrator_db_project::SqliteProjectRepository;
+use orchestrator_db_scene::SqliteSceneRepository;
+
+// Import ops crates to bring impl blocks into scope
+use orchestrator_avatar_service as _;
+use orchestrator_avatar_pipeline as _;
+use orchestrator_ops_project as _;
+use orchestrator_ops_scene as _;
+use orchestrator_ops_asset as _;
+use orchestrator_script as _;
 use orchestrator_http::HttpServer;
 use std::fs;
 use std::sync::Arc;

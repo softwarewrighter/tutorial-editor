@@ -1,7 +1,8 @@
-use orchestrator_core::{
+use orchestrator_app::{
     OrchestratorApp,
     ports::{AssetRepository, ProjectRepository, SceneRepository},
 };
+use orchestrator_script::ScriptOps;
 use serde::Deserialize;
 use std::convert::Infallible;
 use std::sync::Arc;

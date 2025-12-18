@@ -8,4 +8,10 @@ anyhow = { workspace = true }
 warp = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-orchestrator-core = { path = "../orchestrator-core" }
+orchestrator-app = { path = "../orchestrator-app" }
+orchestrator-ops-project = { path = "../orchestrator-ops-project" }
+orchestrator-ops-scene = { path = "../orchestrator-ops-scene" }
+orchestrator-ops-asset = { path = "../orchestrator-ops-asset" }
+orchestrator-avatar-service = { path = "../orchestrator-avatar-service" }
+orchestrator-avatar-pipeline = { path = "../orchestrator-avatar-pipeline" }
+orchestrator-script = { path = "../orchestrator-script" }
