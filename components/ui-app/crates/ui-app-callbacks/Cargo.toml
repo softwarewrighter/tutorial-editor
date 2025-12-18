@@ -1,0 +1,11 @@
+[package]
+name = "ui-app-callbacks"
+version = "0.1.0"
+edition.workspace = true
+
+[dependencies]
+ui-core = { workspace = true }
+ui-api = { workspace = true }
+ui-macros = { workspace = true }
+yew = { workspace = true }
+wasm-bindgen-futures = { workspace = true }

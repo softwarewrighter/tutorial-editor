@@ -1,22 +1,8 @@
+use ui_app_callbacks::{build_callbacks, use_fetch_projects, use_fetch_scenes};
 use ui_core::{ProjectDto, SceneDto};
 use yew::prelude::*;
 
-use crate::callbacks::{build_callbacks, use_fetch_projects, use_fetch_scenes};
 use crate::render::{render_detail_section, render_project_section, render_scene_section};
-
-pub struct AppCallbacks {
-    pub on_project_select: Callback<i64>,
-    pub on_scene_select: Callback<SceneDto>,
-    pub on_show_project_form: Callback<MouseEvent>,
-    pub on_show_scene_form: Callback<MouseEvent>,
-    pub on_project_submit: Callback<(String, String)>,
-    pub on_scene_submit: Callback<(String, i32)>,
-    pub on_cancel_project_form: Callback<()>,
-    pub on_cancel_scene_form: Callback<()>,
-    pub on_edit_scene: Callback<SceneDto>,
-    pub on_save_scene: Callback<SceneDto>,
-    pub on_cancel_edit: Callback<()>,
-}
 
 #[function_component(App)]
 pub fn app() -> Html {

@@ -4,7 +4,7 @@ use ui_macros::{hide_callback, show_callback, some_callback};
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 
-use crate::app::AppCallbacks;
+use crate::AppCallbacks;
 use crate::callbacks2::{build_edit_scene, build_project_submit, build_save_scene, build_scene_submit};
 
 pub fn build_callbacks(

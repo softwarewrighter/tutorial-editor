@@ -10,6 +10,7 @@ ui-macros = { workspace = true }
 ui-project = { workspace = true }
 ui-scene = { workspace = true }
 ui-scene-detail = { workspace = true }
+ui-app-callbacks = { workspace = true }
 yew = { workspace = true }
 wasm-bindgen = { workspace = true }
 wasm-bindgen-futures = { workspace = true }

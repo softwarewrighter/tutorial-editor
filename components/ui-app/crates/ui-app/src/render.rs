@@ -1,10 +1,9 @@
+use ui_app_callbacks::AppCallbacks;
 use ui_core::{ProjectDto, SceneDto};
 use ui_project::{ProjectForm, ProjectList};
 use ui_scene::{SceneEditForm, SceneForm, SceneList};
 use ui_scene_detail::SceneDetail;
 use yew::prelude::*;
-
-use crate::app::AppCallbacks;
 
 pub fn render_project_section(
     projects: &[ProjectDto],
