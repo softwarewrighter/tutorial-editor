@@ -47,6 +47,11 @@ pub struct UpdateAssetRequest {
     pub metadata: Option<String>,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct GenerateScriptRequest {
+    pub prompt: String,
+}
+
 pub async fn handle_health() -> Result<impl warp::Reply, Infallible> {
     #[derive(Serialize)]
     struct HealthReply {

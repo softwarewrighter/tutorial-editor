@@ -4,6 +4,7 @@ mod handlers;
 mod project_routes;
 mod routes;
 mod scene_routes;
+mod script_routes;
 
 use orchestrator_core::{
     OrchestratorApp,

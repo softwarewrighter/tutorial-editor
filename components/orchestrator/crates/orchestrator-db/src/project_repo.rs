@@ -65,6 +65,43 @@ impl ProjectRepository for SqliteProjectRepository {
         Ok(projects)
     }
 
+    async fn get_project(&self, id: i64) -> Result<Option<Project>> {
+        let conn = self.conn.clone();
+        let project = tokio::task::spawn_blocking(move || {
+            let conn = conn.lock().unwrap();
+            let mut stmt = conn.prepare(
+                "SELECT id, slug, title, subtitle, description, created_at, updated_at
+                 FROM projects WHERE id = ?1",
+            )?;
+            let mut rows = stmt.query_map(params![id], |row| {
+                let created_at_str: String = row.get(5)?;
+                let updated_at_str: String = row.get(6)?;
+                let created_at = OffsetDateTime::parse(
+                    &created_at_str,
+                    &time::format_description::well_known::Rfc3339,
+                )
+                .unwrap_or_else(|_| OffsetDateTime::now_utc());
+                let updated_at = OffsetDateTime::parse(
+                    &updated_at_str,
+                    &time::format_description::well_known::Rfc3339,
+                )
+                .unwrap_or_else(|_| OffsetDateTime::now_utc());
+                Ok(Project {
+                    id: row.get(0)?,
+                    slug: row.get(1)?,
+                    title: row.get(2)?,
+                    subtitle: row.get(3)?,
+                    description: row.get(4)?,
+                    created_at,
+                    updated_at,
+                })
+            })?;
+            Ok::<_, anyhow::Error>(rows.next().transpose()?)
+        })
+        .await??;
+        Ok(project)
+    }
+
     async fn create_project(&self, mut project: Project) -> Result<Project> {
         let conn = self.conn.clone();
         let slug = project.slug.clone();
