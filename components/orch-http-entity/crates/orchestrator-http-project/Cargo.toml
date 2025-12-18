@@ -1,0 +1,11 @@
+[package]
+name = "orchestrator-http-project"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+warp = { workspace = true }
+serde = { workspace = true }
+orchestrator-app = { path = "../../../orch-app/crates/orchestrator-app" }
+orchestrator-http-core = { path = "../../../orch-http-core/crates/orchestrator-http-core" }
+orchestrator-ops-project = { path = "../../../orch-app/crates/orchestrator-ops-project" }

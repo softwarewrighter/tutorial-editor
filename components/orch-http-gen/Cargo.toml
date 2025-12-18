@@ -1,0 +1,14 @@
+[workspace]
+members = [
+    "crates/orchestrator-http-avatar",
+    "crates/orchestrator-http-script",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+
+[workspace.dependencies]
+warp = "0.3"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

@@ -1,0 +1,13 @@
+[package]
+name = "orchestrator-avatar-media"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = { workspace = true }
+orchestrator-app = { path = "../../../orch-app/crates/orchestrator-app" }
+orchestrator-domain = { path = "../../../orch-domain/crates/orchestrator-domain" }
+orchestrator-avatar-service = { path = "../../../orch-avatar/crates/orchestrator-avatar-service" }
+orchestrator-ops-asset-read = { path = "../../../orch-ops-asset/crates/orchestrator-ops-asset-read" }
+orchestrator-ops-asset-write = { path = "../../../orch-ops-asset/crates/orchestrator-ops-asset-write" }
+orchestrator-ops-scene-read = { path = "../../../orch-ops-scene/crates/orchestrator-ops-scene-read" }

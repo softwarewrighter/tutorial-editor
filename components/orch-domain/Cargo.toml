@@ -1,0 +1,10 @@
+[workspace]
+members = ["crates/orchestrator-domain"]
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+time = { version = "0.3", features = ["macros", "formatting", "serde", "parsing"] }

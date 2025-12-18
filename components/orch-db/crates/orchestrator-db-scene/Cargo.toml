@@ -1,0 +1,14 @@
+[package]
+name = "orchestrator-db-scene"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = { workspace = true }
+async-trait = "0.1"
+rusqlite = { workspace = true }
+time = { workspace = true }
+tokio = { workspace = true }
+orchestrator-db-core = { path = "../orchestrator-db-core" }
+orchestrator-domain = { path = "../../../orch-domain/crates/orchestrator-domain" }
+orchestrator-ports-scene = { path = "../../../orch-ports/crates/orchestrator-ports-scene" }

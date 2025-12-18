@@ -1,0 +1,15 @@
+[workspace]
+members = [
+    "crates/orchestrator-ports-project",
+    "crates/orchestrator-ports-scene",
+    "crates/orchestrator-ports-asset",
+    "crates/orchestrator-ports-services",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+
+[workspace.dependencies]
+anyhow = "1"
+async-trait = "0.1"

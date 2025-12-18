@@ -1,0 +1,12 @@
+[package]
+name = "orchestrator-http-script"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+warp = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+orchestrator-app = { path = "../../../orch-app/crates/orchestrator-app" }
+orchestrator-http-core = { path = "../../../orch-http-core/crates/orchestrator-http-core" }
+orchestrator-script = { path = "../../../orch-avatar/crates/orchestrator-script" }

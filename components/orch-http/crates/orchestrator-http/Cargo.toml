@@ -1,0 +1,16 @@
+[package]
+name = "orchestrator-http"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = { workspace = true }
+warp = { workspace = true }
+tracing = { workspace = true }
+orchestrator-app = { path = "../../../orch-app/crates/orchestrator-app" }
+orchestrator-http-health = { path = "../../../orch-http-core/crates/orchestrator-http-health" }
+orchestrator-http-project = { path = "../../../orch-http-entity/crates/orchestrator-http-project" }
+orchestrator-http-scene = { path = "../../../orch-http-entity/crates/orchestrator-http-scene" }
+orchestrator-http-asset = { path = "../../../orch-http-entity/crates/orchestrator-http-asset" }
+orchestrator-http-avatar = { path = "../../../orch-http-gen/crates/orchestrator-http-avatar" }
+orchestrator-http-script = { path = "../../../orch-http-gen/crates/orchestrator-http-script" }

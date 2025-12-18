@@ -1,0 +1,36 @@
+[package]
+name = "orchestrator-cli"
+version = "0.1.0"
+edition = "2024"
+repository = "https://github.com/softwarewrighter/tutorial-editor"
+license = "MIT"
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true }
+serde = { workspace = true }
+toml = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+orchestrator-app = { path = "../../../orch-app/crates/orchestrator-app" }
+orchestrator-ops-project = { path = "../../../orch-app/crates/orchestrator-ops-project" }
+orchestrator-ops-scene-read = { path = "../../../orch-ops-scene/crates/orchestrator-ops-scene-read" }
+orchestrator-ops-scene-write = { path = "../../../orch-ops-scene/crates/orchestrator-ops-scene-write" }
+orchestrator-ops-asset-read = { path = "../../../orch-ops-asset/crates/orchestrator-ops-asset-read" }
+orchestrator-ops-asset-write = { path = "../../../orch-ops-asset/crates/orchestrator-ops-asset-write" }
+orchestrator-avatar-service = { path = "../../../orch-avatar/crates/orchestrator-avatar-service" }
+orchestrator-avatar-pipeline = { path = "../../../orch-avatar/crates/orchestrator-avatar-pipeline" }
+orchestrator-script = { path = "../../../orch-avatar/crates/orchestrator-script" }
+orchestrator-db-project = { path = "../../../orch-db/crates/orchestrator-db-project" }
+orchestrator-db-scene = { path = "../../../orch-db/crates/orchestrator-db-scene" }
+orchestrator-db-asset = { path = "../../../orch-db/crates/orchestrator-db-asset" }
+orchestrator-http = { path = "../../../orch-http/crates/orchestrator-http" }
+orchestrator-adapter-llm = { path = "../../../orch-adapters/crates/orchestrator-adapter-llm" }
+orchestrator-adapter-tts = { path = "../../../orch-adapters/crates/orchestrator-adapter-tts" }
+orchestrator-adapter-avatar = { path = "../../../orch-adapters/crates/orchestrator-adapter-avatar" }
+orchestrator-adapter-mcp = { path = "../../../orch-adapters/crates/orchestrator-adapter-mcp" }
+
+[build-dependencies]
+chrono = "0.4"
+hostname = "0.4"

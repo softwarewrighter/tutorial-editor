@@ -1,0 +1,12 @@
+[workspace]
+members = [
+    "crates/orchestrator-ops-asset-read",
+    "crates/orchestrator-ops-asset-write",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+
+[workspace.dependencies]
+anyhow = "1"

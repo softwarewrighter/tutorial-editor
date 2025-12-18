@@ -1,9 +1,0 @@
-[package]
-name = "orchestrator-ports-services"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]
-anyhow = { workspace = true }
-async-trait = "0.1"
-orchestrator-domain = { path = "../orchestrator-domain" }
